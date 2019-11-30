@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.dto;
 
+import com.scut.indoorLocation.enumeration.CodeEnum;
 import lombok.Data;
 
 /**
@@ -7,14 +8,15 @@ import lombok.Data;
  */
 @Data
 public class Result<T> {
-    /** 状态码. */
-    private Integer code;
+
+    /** 状态码、信息说明. */
+    private int code;
+
+    /** 信息说明 */
+    private String msg;
 
     /** 提示信息. */
     private Boolean success;
-
-    /** 信息说明. */
-    private String msg;
 
     /** 具体的内容. */
     private T data;
