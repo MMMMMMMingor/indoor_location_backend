@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password:
+    type: com.alibaba.druid.pool.DruidDataSource
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: warn
+    com.scut.indoorLocation.dao: trace
+
+levelDB:
+  dir:
+    path: "./levelDB"
