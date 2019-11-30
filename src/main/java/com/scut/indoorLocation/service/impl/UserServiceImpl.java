@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.scut.indoorLocation.entity.User;
 import com.scut.indoorLocation.mapper.UserMapper;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by Mingor on 2019/11/19 9:35
  */
-@Service()
+@Service
 public class UserServiceImpl implements UserService {
 
     @Resource
@@ -21,11 +22,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsersList() {
-        return null;
+        return userMapper.selectList(null);
     }
 
     @Override
     public List<User> getByAge(int age) {
-        return null;
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lt("age", age);
+        return userMapper.selectList(queryWrapper);
     }
 }

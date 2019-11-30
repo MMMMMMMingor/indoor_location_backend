@@ -1,15 +1,19 @@
 package com.scut.indoorLocation.controller;
 
+import com.scut.indoorLocation.dto.Result;
 import com.scut.indoorLocation.entity.User;
 import com.scut.indoorLocation.service.UserService;
+import com.scut.indoorLocation.utility.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -19,20 +23,19 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    @Autowired
+    @Resource
     private UserService userService;
 
     @ApiOperation("查询所有的user")
     @GetMapping("/allUsers")
-    public List<User> getUsers(){
-        return userService.getUsersList();
+    public Result<List<User>> getUsers(){
+        return ResultUtil.success(userService.getUsersList());
     }
 
     @ApiOperation("根据age查询user")
     @ApiImplicitParam(name = "age", value = "年龄", required = true)
     @GetMapping("/getUsersByAge")
-    public List<User> getUsersByAge(@RequestParam("age") int age){
-        List<User> users = userService.getByAge(age);
-        return users;
+    public Result<List<User>> getUsersByAge(@RequestParam("age") int age){
+        return ResultUtil.success(userService.getByAge(age));
     }
 }
