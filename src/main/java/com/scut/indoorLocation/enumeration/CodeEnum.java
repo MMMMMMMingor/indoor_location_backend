@@ -6,9 +6,9 @@ package com.scut.indoorLocation.enumeration;
  * Created by Mingor on 2019/11/30 14:24
  */
 public enum CodeEnum {
-    UNKNOWN_ERROR(-1, "未知错误"),
     SUCCESS(200, "成功"),
     PARAMETER_ERROR(400, "参数错误"),
+    UNKNOWN_ERROR(500, "未知错误"),
     ;
 
     private Integer code;

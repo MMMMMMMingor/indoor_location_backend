@@ -1,6 +1,5 @@
 package com.scut.indoorLocation.dto;
 
-import com.scut.indoorLocation.enumeration.CodeEnum;
 import lombok.Data;
 
 /**
