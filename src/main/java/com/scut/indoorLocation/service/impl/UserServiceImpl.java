@@ -1,9 +1,9 @@
 package com.scut.indoorLocation.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.scut.indoorLocation.entity.User;
-import com.scut.indoorLocation.mapper.UserMapper;
+import com.scut.indoorLocation.entity.UserBasic;
+import com.scut.indoorLocation.exception.UserNameExistException;
+import com.scut.indoorLocation.mapper.UserBasicMapper;
+import com.scut.indoorLocation.mapper.UserInformationMapper;
 import com.scut.indoorLocation.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +17,30 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Resource
-    private UserMapper userMapper;
+    private UserBasicMapper userBasicMapper;
 
+    @Resource
+    private UserInformationMapper userInformationMapper;
 
     @Override
-    public List<User> getUsersList() {
-        return userMapper.selectList(null);
+    public void userRegister(String username, String password) throws UserNameExistException{
+        UserBasic userBasic = UserBasic.builder()
+                .username(username)
+                .password(password)
+                .build();
+
+        try{
+            if(userBasicMapper.insert(userBasic) != 1)
+                throw new UserNameExistException("用户名已存在");
+        }catch (Exception e){
+            throw new UserNameExistException("用户名已存在");
+        }
     }
 
     @Override
-    public List<User> getByAge(int age) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lt("age", age);
-        return userMapper.selectList(queryWrapper);
+    public List<UserBasic> getUsersList() {
+        return userBasicMapper.selectList(null);
     }
+
+
 }

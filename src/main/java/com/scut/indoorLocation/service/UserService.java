@@ -1,6 +1,7 @@
 package com.scut.indoorLocation.service;
 
-import com.scut.indoorLocation.entity.User;
+import com.scut.indoorLocation.entity.UserBasic;
+import com.scut.indoorLocation.exception.UserNameExistException;
 
 import java.util.List;
 
@@ -10,16 +11,19 @@ import java.util.List;
 public interface UserService {
 
     /**
+     * 用户注册
+     * @param username 用户名
+     * @param password 密码
+     * @throws UserNameExistException 用户名已存在
+     */
+    void userRegister(String username, String password) throws UserNameExistException;
+
+    /**
      * 获取所有用户
       * @return 所有用户
      */
-    List<User> getUsersList();
+    List<UserBasic> getUsersList();
 
-    /**
-     * 根据age查询小于该age的用户
-     * @param age 年龄
-     * @return 小于该age的所有用户
-     */
-    List<User> getByAge(int age);
+
 
 }

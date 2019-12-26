@@ -1,15 +1,12 @@
 package com.scut.indoorLocation;
 
-import com.scut.indoorLocation.entity.User;
+import com.scut.indoorLocation.entity.UserBasic;
 import com.scut.indoorLocation.utility.LevelDBUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.handler.IgnoreErrorsBindHandler;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,6 +19,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
+@Ignore
 public class LevelDBTest {
 
     @Autowired
@@ -55,13 +53,13 @@ public class LevelDBTest {
     }
 
     @Test
-    @Ignore
     public void test4(){
-        User ming = levelDBUtil.get("ming", User.class);
+        UserBasic ming = levelDBUtil.get("ming", UserBasic.class);
         log.info(ming.toString());
     }
 
     @Test
+
     public void test5(){
         List<String> keys = levelDBUtil.getKeys();
         for (String key : keys) {

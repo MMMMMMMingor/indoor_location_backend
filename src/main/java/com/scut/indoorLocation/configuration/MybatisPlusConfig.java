@@ -9,4 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @MapperScan(basePackages = {"com.scut.indoorLocation.mapper"})
 public class MybatisPlusConfig {
+
+
 }
