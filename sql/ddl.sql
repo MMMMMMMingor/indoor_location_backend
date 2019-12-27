@@ -22,3 +22,6 @@ CREATE TABLE location.user_information(
     FOREIGN KEY (user_id) REFERENCES user_basic (user_id) ON DELETE CASCADE
 )ENGINE = InnoDB;
 
+CREATE TABLE location.collection{
+
+}

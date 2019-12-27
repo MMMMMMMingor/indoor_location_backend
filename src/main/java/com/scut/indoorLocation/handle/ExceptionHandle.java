@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * 全局错误处理
  * Created by Mingor on 2019/11/30 13:34
@@ -15,11 +17,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class ExceptionHandle {
 
-//    @ExceptionHandler(ExpiredJwtException.class)
-//    public ResponseEntity<String> jwtOutOfTimeHandler(ExpiredJwtException e){
+//    @ExceptionHandler(ExecutionException.class)
+//    public ResponseEntity<String> executionExceptionHandler(ExecutionException e){
 //        log.error("JWT超时 {}", e.getMessage());
-//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("JWT过期，请从新认证");
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("执行异常");
 //    }
-
+//
+//    @ExceptionHandler(InterruptedException.class)
+//    public ResponseEntity<String> interruptedExceptionHandler(InterruptedException e){
+//        log.error("JWT超时 {}", e.getMessage());
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("中断异常");
+//    }
 
 }

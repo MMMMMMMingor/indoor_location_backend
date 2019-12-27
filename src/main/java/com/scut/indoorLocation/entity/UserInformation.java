@@ -14,7 +14,6 @@ import lombok.Data;
 @TableName("user_information")
 public class UserInformation {
 
-    @JsonIgnore
     @TableId(value = "user_id")
     private String userId;
 
@@ -24,7 +23,7 @@ public class UserInformation {
 
     private Integer age;
 
-    private String vacation;
+    private String vocation;
 
     private String personLabel;
 

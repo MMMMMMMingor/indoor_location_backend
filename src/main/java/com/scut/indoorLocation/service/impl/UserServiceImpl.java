@@ -1,20 +1,24 @@
 package com.scut.indoorLocation.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserBasic;
 import com.scut.indoorLocation.entity.UserInformation;
+import com.scut.indoorLocation.exception.UserInfoModifyException;
 import com.scut.indoorLocation.exception.UserNameExistException;
 import com.scut.indoorLocation.mapper.UserBasicMapper;
 import com.scut.indoorLocation.mapper.UserInformationMapper;
 import com.scut.indoorLocation.service.UserService;
 import com.scut.indoorLocation.utility.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by Mingor on 2019/11/19 9:35
@@ -50,34 +54,46 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public String getUserIdByName(String username) {
-        QueryWrapper<UserBasic> wrapper = new QueryWrapper<>();
-        wrapper.eq("username", username);
-        UserBasic userBasic = userBasicMapper.selectOne(wrapper);
 
-        return userBasic.getId();
+    @Override
+    public List<UserInformation> getUserInfoList() {
+        return userInformationMapper.selectList(null);
     }
 
     @Override
-    public List<UserBasic> getUsersList() {
-        return userBasicMapper.selectList(null);
+    public void modifyUserInformation(UserInfoRequest userInfoRequest) throws UserInfoModifyException, ExecutionException, InterruptedException {
+            String uid = jwtUtil.extractUidSubject(this.request);
+
+            Future<Boolean> success = this.createUserInformation(uid);
+
+            UserInformation userInformation = UserInformation.builder()
+                    .userId(uid)
+                    .nickname(userInfoRequest.getNickname())
+                    .gender(userInfoRequest.getGender())
+                    .age(userInfoRequest.getAge())
+                    .vocation(userInfoRequest.getVacation())
+                    .personLabel(userInfoRequest.getPersonLabel())
+                    .avatarUrl(userInfoRequest.getAvatarUrl())
+                    .build();
+            success.get();
+
+            if(userInformationMapper.updateById(userInformation) != 1)
+                throw new UserInfoModifyException("用户信息修改失败");
     }
 
+
     @Override
-    public void modifyUserInformation(UserInfoRequest userInfoRequest) {
-        String uid = jwtUtil.extractUidSubject(this.request);
+    @Async
+    public Future<Boolean> createUserInformation(String user_id) {
+        if(userBasicMapper.selectById(user_id) != null)
+            return new AsyncResult<>(true);
+
         UserInformation userInformation = UserInformation.builder()
-                .userId(uid)
-                .nickname(userInfoRequest.getNickname())
-                .gender(userInfoRequest.getGender())
-                .age(userInfoRequest.getAge())
-                .vacation(userInfoRequest.getVacation())
-                .personLabel(userInfoRequest.getPersonLabel())
-                .avatarUrl(userInfoRequest.getAvatarUrl())
+                .userId(user_id)
                 .build();
 
-        userInformationMapper.updateById(userInformation);
+        boolean success = (userInformationMapper.insert(userInformation) == 1);
+        return new AsyncResult<>(success);
     }
 
 
