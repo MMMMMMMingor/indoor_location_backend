@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * 账号密码
  * Created by Mingor on 2019/12/26 23:07
  */
 @Data

@@ -5,8 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -24,8 +24,7 @@ public class JwtUtil {
      * @param subject jwt的payload部分
      * @return token字符串
      */
-    public String generateToken(String subject) {
-        Map<String, Object> claims = new HashMap<>();
+    public String generateToken(String subject, Map<String, Object> claims) {
         return createToken(claims, subject);
     }
 
@@ -38,6 +37,19 @@ public class JwtUtil {
     public Boolean validateToken(String token, String subject) {
         final String username = extractSubject(token);
         return (username.equals(subject) && !isTokenExpired(token));
+    }
+
+
+    public String extractUidSubject(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        String token = null;
+
+        if(authHeader !=null && authHeader.startsWith("Bearer ")){
+            token = authHeader.substring(7);
+        }
+
+        Claims claims = extractAllClaims(token);
+        return claims.get("uid").toString();
     }
 
 
@@ -100,6 +112,7 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 20))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }

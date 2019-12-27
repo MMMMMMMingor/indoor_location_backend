@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * JWT认证专用服务（请不要修改！）
  * Created by Mingor on 2019/12/26 22:33
  */
 @Component

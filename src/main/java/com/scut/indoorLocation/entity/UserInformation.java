@@ -26,9 +26,9 @@ public class UserInformation {
 
     private String vacation;
 
-    private String person_label;
+    private String personLabel;
 
-    private String avatar_url;
+    private String avatarUrl;
 
 
 }

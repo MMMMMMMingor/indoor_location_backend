@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * json wen token
  * Created by Mingor on 2019/12/26 23:09
  */
 @Data

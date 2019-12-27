@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import sun.misc.BASE64Encoder;
 
 import javax.annotation.Resource;
 
@@ -20,7 +21,8 @@ import javax.annotation.Resource;
  * Created by Mingor on 2019/12/26 22:11
  */
 @EnableWebSecurity
-public class SecurityConfiger extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
     @Resource
     private JWTUserDetailsService jwtUserDetailsService;
 
@@ -47,12 +49,15 @@ public class SecurityConfiger extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception{
         // 关掉csrf，不然老有个csrftoken传上来；然后auth路径无权限，其他路径全都要验证;关掉session
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/auth")
-                .permitAll()
+                .authorizeRequests().antMatchers("/auth",
+                                                            "/user/register",
+                                                            "/swagger-ui.html",
+                                                            "/v2/api-docs",
+                                                            "/swagger-resources/**",
+                                                            "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // 把jwt过滤器加到，用户验证的过滤器前面。这样在进入用户验证过滤器前，上下文就准备好了
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
