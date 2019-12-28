@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,8 +12,10 @@ import lombok.Data;
 @AllArgsConstructor
 public class SuccessResponse {
 
+    @ApiModelProperty(value = "请求是否成功", name = "success", example = "true")
     private Boolean success;
 
+    @ApiModelProperty(value = "描述信息", name = "message", example = "请求成功")
     private String message;
 
 }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Mingor on 2019/11/18 23:35
@@ -33,7 +32,7 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<SuccessResponse> register(@RequestBody UserAndPassRequest request) {
         try {
-            userService.userRegister(request.getUsername(), request.getPassword());
+            userService.userRegister(request);
             log.info("用户: {} 注册成功!",request.getUsername());
             return ResponseEntity.ok(new SuccessResponse(true, "注册成功"));
         } catch (UserNameExistException e) {
@@ -44,7 +43,7 @@ public class UserController {
 
     @ApiOperation("修改用户信息")
     @RequestMapping(value = "/modify", method = RequestMethod.POST)
-    public ResponseEntity<SuccessResponse> getUsers(@RequestBody UserInfoRequest request) throws ExecutionException, InterruptedException {
+    public ResponseEntity<SuccessResponse> getUsers(@RequestBody UserInfoRequest request){
         try {
             userService.modifyUserInformation(request);
             return ResponseEntity.ok(new SuccessResponse(true, "修改成功"));
@@ -54,7 +53,17 @@ public class UserController {
         }
     }
 
+    @ApiOperation("查询当前用户信息")
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public ResponseEntity<UserInformation> getUserInfo(){
+        return ResponseEntity.ok(userService.getUserInfo());
+    }
 
+    @ApiOperation("根据指定ID查询用户信息")
+    @RequestMapping(value = "/info/{uid}", method = RequestMethod.GET)
+    public ResponseEntity<UserInformation> getUserInfoById(@PathVariable String uid){
+        return ResponseEntity.ok(userService.getUserInfo(uid));
+    }
 
     @ApiOperation("查询所有用户")
     @RequestMapping(value = "/all", method = RequestMethod.GET)

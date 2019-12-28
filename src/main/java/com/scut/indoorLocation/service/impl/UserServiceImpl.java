@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.service.impl;
 
+import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserBasic;
 import com.scut.indoorLocation.entity.UserInformation;
@@ -10,15 +11,14 @@ import com.scut.indoorLocation.mapper.UserInformationMapper;
 import com.scut.indoorLocation.service.UserService;
 import com.scut.indoorLocation.utility.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * Created by Mingor on 2019/11/19 9:35
@@ -34,24 +34,36 @@ public class UserServiceImpl implements UserService {
     private JwtUtil jwtUtil;
 
     @Resource
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Resource
     private UserBasicMapper userBasicMapper;
 
     @Resource
     private UserInformationMapper userInformationMapper;
 
     @Override
-    public void userRegister(String username, String password) throws UserNameExistException{
+    @Transactional(rollbackFor = {UserNameExistException.class})
+    public void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException{
+        String encryptedPassword = passwordEncoder.encode(userAndPassRequest.getPassword()); //对密码进行加密
+
         UserBasic userBasic = UserBasic.builder()
-                .username(username)
-                .password(password)
+                .username(userAndPassRequest.getUsername())
+                .password(encryptedPassword)
                 .build();
 
-        try{
             if(userBasicMapper.insert(userBasic) != 1)
                 throw new UserNameExistException("用户名已存在");
-        }catch (Exception e){
-            throw new UserNameExistException("用户名已存在");
-        }
+            else {
+                // 初始化对应的 user_information 表信息
+                String user_id = userBasicMapper.getUserIdByName(userBasic.getUsername());
+
+                UserInformation userInformation = UserInformation.builder()
+                                                                .userId(user_id)
+                                                                .build();
+
+                userInformationMapper.insert(userInformation);
+            }
     }
 
 
@@ -61,10 +73,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void modifyUserInformation(UserInfoRequest userInfoRequest) throws UserInfoModifyException, ExecutionException, InterruptedException {
+    public void modifyUserInformation(UserInfoRequest userInfoRequest) throws UserInfoModifyException{
+            //从请求上下文中获取 uid
             String uid = jwtUtil.extractUidSubject(this.request);
-
-            Future<Boolean> success = this.createUserInformation(uid);
 
             UserInformation userInformation = UserInformation.builder()
                     .userId(uid)
@@ -75,26 +86,22 @@ public class UserServiceImpl implements UserService {
                     .personLabel(userInfoRequest.getPersonLabel())
                     .avatarUrl(userInfoRequest.getAvatarUrl())
                     .build();
-            success.get();
 
             if(userInformationMapper.updateById(userInformation) != 1)
                 throw new UserInfoModifyException("用户信息修改失败");
     }
 
-
     @Override
-    @Async
-    public Future<Boolean> createUserInformation(String user_id) {
-        if(userBasicMapper.selectById(user_id) != null)
-            return new AsyncResult<>(true);
+    public UserInformation getUserInfo() {
+        String uid = jwtUtil.extractUidSubject(this.request);
 
-        UserInformation userInformation = UserInformation.builder()
-                .userId(user_id)
-                .build();
+        return userInformationMapper.selectById(uid);
 
-        boolean success = (userInformationMapper.insert(userInformation) == 1);
-        return new AsyncResult<>(success);
     }
 
+    @Override
+    public UserInformation getUserInfo(String uid) {
+        return userInformationMapper.selectById(uid);
+    }
 
 }
