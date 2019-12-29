@@ -17,7 +17,10 @@ logging:
   level:
     root: INFO
     com.scut.indoorLocation.dao: INFO
+  file:
+    path: "/root/Downloads/back_end/log"
 
 levelDB:
   dir:
     path: "/root/Downloads/back_end/levelDB"
+

@@ -9,6 +9,7 @@ import com.scut.indoorLocation.exception.UserNameExistException;
 import com.scut.indoorLocation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * Created by Mingor on 2019/11/18 23:35
  */
-@Api("用户接口")
+@Api(value = "用户信息接口", tags = "用户信息接口")
 @RestController
 @Slf4j
 @RequestMapping("/user")
@@ -61,7 +62,7 @@ public class UserController {
 
     @ApiOperation("根据指定ID查询用户信息")
     @RequestMapping(value = "/info/{uid}", method = RequestMethod.GET)
-    public ResponseEntity<UserInformation> getUserInfoById(@PathVariable String uid){
+    public ResponseEntity<UserInformation> getUserInfoById(@ApiParam(value = "用户ID") @PathVariable String uid){
         return ResponseEntity.ok(userService.getUserInfo(uid));
     }
 
