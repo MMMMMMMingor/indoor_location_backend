@@ -17,7 +17,7 @@ CREATE TABLE location.user_information(
     age INT(3) DEFAULT 18 COMMENT '年龄',
     vocation VARCHAR(12) DEFAULT '' COMMENT '职业',
     person_label VARCHAR(20) DEFAULT '' COMMENT '个人标签',
-    avatar_url VARCHAR(50) DEFAULT '' COMMENT '头像地址',
+    avatar_url VARCHAR(100) DEFAULT '' COMMENT '头像地址',
     PRIMARY KEY (user_id),
     INDEX idx_nickname (nickname),
     FOREIGN KEY (user_id) REFERENCES user_basic (user_id) ON DELETE CASCADE
@@ -27,7 +27,7 @@ CREATE TABLE location.store(
     store_id VARCHAR(32) NOT NULL COMMENT '主键ID',
     owner_id VARCHAR(32) NOT NULL COMMENT '店铺拥有者ID',
     store_name VARCHAR(20) NOT NULL DEFAULT '未命名' COMMENT '店铺名',
-    address VARCHAR(50) NOT NULL DEFAULT '' COMMENT '地址',
+    address VARCHAR(50) NOT NULL DEFAULT '店铺地址' COMMENT '地址',
     business_time VARCHAR(20) NOT NULL DEFAULT '周一-周日 11:00-21:00' COMMENT '营业时间',
     PRIMARY KEY (store_id),
     FOREIGN KEY (owner_id) REFERENCES user_basic (user_id) ON DELETE CASCADE

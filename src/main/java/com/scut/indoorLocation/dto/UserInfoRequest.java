@@ -22,8 +22,8 @@ public class UserInfoRequest {
     @ApiModelProperty(value = "年龄", name = "age", example = "18")
     private Integer age;
 
-    @ApiModelProperty(value = "职业", name = "vacation", example = "学生")
-    private String vacation;
+    @ApiModelProperty(value = "职业", name = "vocation", example = "学生")
+    private String vocation;
 
     @ApiModelProperty(value = "个人标签", name = "personLabel", example = "坑")
     private String personLabel;

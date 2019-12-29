@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class JWTResponse {
 
-    private String jwt;
+    private String token;
 
 }

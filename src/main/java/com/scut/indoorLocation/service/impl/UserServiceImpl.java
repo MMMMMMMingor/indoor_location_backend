@@ -13,12 +13,10 @@ import com.scut.indoorLocation.utility.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Mingor on 2019/11/19 9:35
@@ -43,27 +41,30 @@ public class UserServiceImpl implements UserService {
     private UserInformationMapper userInformationMapper;
 
     @Override
-    @Transactional(rollbackFor = {UserNameExistException.class})
     public void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException{
-        String encryptedPassword = passwordEncoder.encode(userAndPassRequest.getPassword()); //对密码进行加密
+        try {
+            String encryptedPassword = passwordEncoder.encode(userAndPassRequest.getPassword()); //对密码进行加密
 
-        UserBasic userBasic = UserBasic.builder()
-                .username(userAndPassRequest.getUsername())
-                .password(encryptedPassword)
-                .build();
+            UserBasic userBasic = UserBasic.builder()
+                    .username(userAndPassRequest.getUsername())
+                    .password(encryptedPassword)
+                    .build();
 
-            if(userBasicMapper.insert(userBasic) != 1)
-                throw new UserNameExistException("用户名已存在");
-            else {
-                // 初始化对应的 user_information 表信息
-                String user_id = userBasicMapper.getUserIdByName(userBasic.getUsername());
+            userBasicMapper.insert(userBasic);
 
-                UserInformation userInformation = UserInformation.builder()
-                                                                .userId(user_id)
-                                                                .build();
+            //获取uid
+            String user_id = userBasicMapper.getUserIdByName(userBasic.getUsername());
 
-                userInformationMapper.insert(userInformation);
-            }
+            // 初始化对应的 user_information 表信息
+            UserInformation userInformation = UserInformation.builder()
+                    .userId(user_id)
+                    .build();
+
+            userInformationMapper.insert(userInformation);
+
+        }catch (Exception e){
+            throw new UserNameExistException("用户名已存在");
+        }
     }
 
 
@@ -82,12 +83,13 @@ public class UserServiceImpl implements UserService {
                     .nickname(userInfoRequest.getNickname())
                     .gender(userInfoRequest.getGender())
                     .age(userInfoRequest.getAge())
-                    .vocation(userInfoRequest.getVacation())
+                    .vocation(userInfoRequest.getVocation())
                     .personLabel(userInfoRequest.getPersonLabel())
                     .avatarUrl(userInfoRequest.getAvatarUrl())
                     .build();
 
-            if(userInformationMapper.updateById(userInformation) != 1)
+            int count = userInformationMapper.updateById(userInformation);
+            if(count != 1)
                 throw new UserInfoModifyException("用户信息修改失败");
     }
 

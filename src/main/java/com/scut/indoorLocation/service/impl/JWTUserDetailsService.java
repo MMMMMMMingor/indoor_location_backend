@@ -30,6 +30,9 @@ public class JWTUserDetailsService implements UserDetailsService {
         wrapper.eq("username", username);
         UserBasic userBasic = userBasicMapper.selectOne(wrapper);
 
+        if(userBasic == null)
+            throw new UsernameNotFoundException("用户不存在");
+
         Collection<GrantedAuthority> collection = new ArrayList<>();
 
         return (new User(username, userBasic.getPassword(), collection));
