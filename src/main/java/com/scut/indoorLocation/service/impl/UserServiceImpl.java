@@ -75,22 +75,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void modifyUserInformation(UserInfoRequest userInfoRequest) throws UserInfoModifyException{
-            //从请求上下文中获取 uid
-            String uid = jwtUtil.extractUidSubject(this.request);
+        //从请求上下文中获取 uid
+        String uid = jwtUtil.extractUidSubject(this.request);
 
-            UserInformation userInformation = UserInformation.builder()
-                    .userId(uid)
-                    .nickname(userInfoRequest.getNickname())
-                    .gender(userInfoRequest.getGender())
-                    .age(userInfoRequest.getAge())
-                    .vocation(userInfoRequest.getVocation())
-                    .personLabel(userInfoRequest.getPersonLabel())
-                    .avatarUrl(userInfoRequest.getAvatarUrl())
-                    .build();
+        UserInformation userInformation = userInformationMapper.selectById(uid);
+        userInformation = UserInformation.builder()
+                .userId(uid)
+                .nickname(userInfoRequest.getNickname()==null? userInformation.getNickname() : userInfoRequest.getNickname())
+                .gender(userInfoRequest.getGender()==null? userInformation.getGender() : userInfoRequest.getGender())
+                .age(userInfoRequest.getAge()==null? userInformation.getAge() : userInfoRequest.getAge())
+                .vocation(userInfoRequest.getVocation()==null? userInformation.getVocation() : userInfoRequest.getVocation())
+                .personLabel(userInfoRequest.getPersonLabel()==null? userInformation.getPersonLabel() : userInfoRequest.getPersonLabel())
+                .avatarUrl(userInfoRequest.getAvatarUrl()==null? userInformation.getAvatarUrl() : userInfoRequest.getAvatarUrl())
+                .build();
 
-            int count = userInformationMapper.updateById(userInformation);
-            if(count != 1)
-                throw new UserInfoModifyException("用户信息修改失败");
+        int count = userInformationMapper.updateById(userInformation);
+        if(count != 1)
+            throw new UserInfoModifyException("用户信息修改失败");
+
+        log.info("{}: 修改用户信息",uid);
     }
 
     @Override

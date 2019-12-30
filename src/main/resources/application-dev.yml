@@ -22,3 +22,8 @@ levelDB:
   dir:
     path: "./levelDB"
 
+
+#图片地址
+image:
+  dir:
+    path: "C:/Users/Mingor/Desktop/室内定位服务项目/indoor_location/images"

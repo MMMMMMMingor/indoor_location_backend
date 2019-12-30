@@ -28,7 +28,7 @@ public class UserInfoRequest {
     @ApiModelProperty(value = "个人标签", name = "personLabel", example = "坑")
     private String personLabel;
 
-    @ApiModelProperty(value = "头像地址", name = "avatarUrl", example = "https://i2.hdslb.com/bfs/face/719eb343c7e8f8f6e4a3b5308a1c7b6cc3fded57.jpg")
+    @ApiModelProperty(value = "头像地址", name = "avatarUrl", example = "http://39.99.131.85/images/719eb343c7e8f8f6e4a3b5308a1c7b6cc3fded57.jpg")
     private String avatarUrl;
 
 }

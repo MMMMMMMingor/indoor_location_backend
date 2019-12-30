@@ -24,3 +24,7 @@ levelDB:
   dir:
     path: "/root/Downloads/back_end/levelDB"
 
+#图片地址
+image:
+  dir:
+    path: "/var/www/images"
