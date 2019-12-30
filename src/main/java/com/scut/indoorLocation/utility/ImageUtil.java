@@ -28,26 +28,32 @@ public class ImageUtil {
     private static String URL_PATH = "http://39.99.131.85/images/";
 
     /**
+     * 注意该方法为异步方法
      * 上传的文件  -->   文件url
      * @param image 待上传的文件
-     * @return 文件url
+     * @return 图片url
      */
     @Async
     public Future<String> uploadImage(MultipartFile image) throws FileUploadException {
 
+        // 若图片为空
         if(image == null || image.isEmpty())
             throw new FileUploadException("图片不能为空");
 
+        // 使用UUID构造新的文件路径
         String tag = image.getOriginalFilename().split("\\.")[1];
-        String fileName = UUID.randomUUID().toString().replaceAll("-", "") + tag;
+        String fileName = UUID.randomUUID().toString().replaceAll("-", "") + "." + tag;
         String destFileName = imageFilesPath + File.separator + fileName;
         File destFile = new File(destFileName);
+
+        // 保存图片
         try {
             image.transferTo(destFile);
         } catch (IOException e) {
             throw new FileUploadException("系统内部IO错误");
         }
 
+        // 返回图片的URL
         return new AsyncResult<>(URL_PATH + fileName);
     }
 
