@@ -29,12 +29,12 @@ public class ImageUtil {
 
     /**
      * 注意该方法为异步方法
-     * 上传的文件  -->   文件url
+     * 上传的照片  -->   文件url
      * @param image 待上传的文件
      * @return 图片url
      */
     @Async
-    public Future<String> uploadImage(MultipartFile image) throws FileUploadException {
+    public Future<String> saveImage(MultipartFile image) throws FileUploadException {
 
         // 若图片为空
         if(image == null || image.isEmpty())
