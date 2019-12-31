@@ -2,8 +2,12 @@ package com.scut.indoorLocation.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDateTime;
+
 
 /**
  * Created by Mingor on 2019/12/26 21:59
@@ -28,5 +32,9 @@ public class UserInformation {
 
     private String avatarUrl;
 
+    @JsonIgnore
+    private LocalDateTime createTime;
 
+    @JsonIgnore
+    private LocalDateTime updateTime;
 }

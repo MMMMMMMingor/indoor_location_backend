@@ -15,9 +15,11 @@ import com.scut.indoorLocation.utility.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 /**
  * Created by Mingor on 2019/11/19 9:35
@@ -42,30 +44,30 @@ public class UserServiceImpl implements UserService {
     private UserInformationMapper userInformationMapper;
 
     @Override
+    @Transactional(rollbackFor = UserNameExistException.class)
     public void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException {
-        try {
-            String encryptedPassword = passwordEncoder.encode(userAndPassRequest.getPassword()); //对密码进行加密
+        String encryptedPassword = passwordEncoder.encode(userAndPassRequest.getPassword()); //对密码进行加密
 
-            UserBasic userBasic = UserBasic.builder()
-                    .username(userAndPassRequest.getUsername())
-                    .password(encryptedPassword)
-                    .build();
+        UserBasic userBasic = UserBasic.builder()
+                .username(userAndPassRequest.getUsername())
+                .password(encryptedPassword)
+                .build();
 
-            userBasicMapper.insert(userBasic);
+        userBasicMapper.insert(userBasic);
 
-            //获取uid
-            String user_id = userBasicMapper.getUserIdByName(userBasic.getUsername());
+        //获取uid
+        String user_id = userBasicMapper.getUserIdByName(userBasic.getUsername());
 
-            // 初始化对应的 user_information 表信息
-            UserInformation userInformation = UserInformation.builder()
-                    .userId(user_id)
-                    .build();
+        // 初始化对应的 user_information 表信息
+        UserInformation userInformation = UserInformation.builder()
+                .userId(user_id)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
 
-            userInformationMapper.insert(userInformation);
+        if (userInformationMapper.insert(userInformation) != 1)
+            throw new UserNameExistException("用户创建失败");
 
-        } catch (Exception e) {
-            throw new UserNameExistException("用户名已存在");
-        }
     }
 
 
@@ -89,6 +91,7 @@ public class UserServiceImpl implements UserService {
                 .vocation(userInfoRequest.getVocation() == null ? userInformation.getVocation() : userInfoRequest.getVocation())
                 .personLabel(userInfoRequest.getPersonLabel() == null ? userInformation.getPersonLabel() : userInfoRequest.getPersonLabel())
                 .avatarUrl(userInfoRequest.getAvatarUrl() == null ? userInformation.getAvatarUrl() : userInfoRequest.getAvatarUrl())
+                .updateTime(LocalDateTime.now())
                 .build();
 
         int count = userInformationMapper.updateById(userInformation);

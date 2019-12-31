@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 /**
  * Created by Mingor on 2019/12/30 22:09
@@ -41,6 +42,7 @@ public class StoreServiceImpl implements StoreService {
                 .storeName(param.getStoreName())
                 .address(param.getAddress())
                 .businessTime(param.getBusinessTime())
+                .createTime(LocalDateTime.now())
                 .build();
 
         if (storeMapper.insert(store) != 1)

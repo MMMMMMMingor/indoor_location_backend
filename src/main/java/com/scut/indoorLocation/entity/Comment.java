@@ -1,7 +1,6 @@
 package com.scut.indoorLocation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,21 +10,24 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * Created by Mingor on 2019/11/18 23:35
+ * Created by Mingor on 2019/12/31 11:25
  */
-
 @Data
 @Builder
-@TableName("user_basic")
-public class UserBasic {
+@TableName("comment")
+public class Comment {
+
+    @TableId(value = "comment_id", type = IdType.ASSIGN_UUID)
+    private String commentId;
+
+    private String storeId;
+
+    private String userId;
+
+    private Integer score;
+
+    private String comment;
 
     @JsonIgnore
-    @TableId(value = "user_id", type = IdType.ASSIGN_UUID)
-    private String id;
-
-    private String username;
-
-    @JsonIgnore
-    private String password;
-
+    private LocalDateTime createTime;
 }
