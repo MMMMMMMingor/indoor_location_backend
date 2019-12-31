@@ -1,5 +1,7 @@
 package com.scut.indoorLocation.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserBasic;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * Created by Mingor on 2019/11/19 9:35
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
     private UserInformationMapper userInformationMapper;
 
     @Override
-    public void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException{
+    public void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException {
         try {
             String encryptedPassword = passwordEncoder.encode(userAndPassRequest.getPassword()); //对密码进行加密
 
@@ -62,38 +63,39 @@ public class UserServiceImpl implements UserService {
 
             userInformationMapper.insert(userInformation);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new UserNameExistException("用户名已存在");
         }
     }
 
 
     @Override
-    public List<UserInformation> getUserInfoList() {
-        return userInformationMapper.selectList(null);
+    public IPage<UserInformation> getUserInfoByPage(Long pageNO, Long pageSize) {
+        Page<UserInformation> page = new Page<>(pageNO, pageSize);
+        return userInformationMapper.selectPage(page, null);
     }
 
     @Override
-    public void modifyUserInformation(UserInfoRequest userInfoRequest) throws UserInfoModifyException{
+    public void modifyUserInformation(UserInfoRequest userInfoRequest) throws UserInfoModifyException {
         //从请求上下文中获取 uid
         String uid = jwtUtil.extractUidSubject(this.request);
 
         UserInformation userInformation = userInformationMapper.selectById(uid);
         userInformation = UserInformation.builder()
                 .userId(uid)
-                .nickname(userInfoRequest.getNickname()==null? userInformation.getNickname() : userInfoRequest.getNickname())
-                .gender(userInfoRequest.getGender()==null? userInformation.getGender() : userInfoRequest.getGender())
-                .age(userInfoRequest.getAge()==null? userInformation.getAge() : userInfoRequest.getAge())
-                .vocation(userInfoRequest.getVocation()==null? userInformation.getVocation() : userInfoRequest.getVocation())
-                .personLabel(userInfoRequest.getPersonLabel()==null? userInformation.getPersonLabel() : userInfoRequest.getPersonLabel())
-                .avatarUrl(userInfoRequest.getAvatarUrl()==null? userInformation.getAvatarUrl() : userInfoRequest.getAvatarUrl())
+                .nickname(userInfoRequest.getNickname() == null ? userInformation.getNickname() : userInfoRequest.getNickname())
+                .gender(userInfoRequest.getGender() == null ? userInformation.getGender() : userInfoRequest.getGender())
+                .age(userInfoRequest.getAge() == null ? userInformation.getAge() : userInfoRequest.getAge())
+                .vocation(userInfoRequest.getVocation() == null ? userInformation.getVocation() : userInfoRequest.getVocation())
+                .personLabel(userInfoRequest.getPersonLabel() == null ? userInformation.getPersonLabel() : userInfoRequest.getPersonLabel())
+                .avatarUrl(userInfoRequest.getAvatarUrl() == null ? userInformation.getAvatarUrl() : userInfoRequest.getAvatarUrl())
                 .build();
 
         int count = userInformationMapper.updateById(userInformation);
-        if(count != 1)
+        if (count != 1)
             throw new UserInfoModifyException("用户信息修改失败");
 
-        log.info("{}: 修改用户信息",uid);
+        log.info("{}: 修改用户信息", uid);
     }
 
     @Override

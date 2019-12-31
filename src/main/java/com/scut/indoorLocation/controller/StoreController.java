@@ -1,20 +1,17 @@
 package com.scut.indoorLocation.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.scut.indoorLocation.dto.PageRequest;
 import com.scut.indoorLocation.dto.StoreInfoRequest;
 import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.entity.Store;
-import com.scut.indoorLocation.exception.StoreCreateException;
+import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.service.StoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -25,7 +22,7 @@ import javax.annotation.Resource;
 @Api(value = "店铺接口", tags = "店铺接口")
 @RestController
 @Slf4j
-@RequestMapping("/store")
+@RequestMapping("/api/store")
 public class StoreController {
 
     @Resource
@@ -37,22 +34,24 @@ public class StoreController {
         try {
             storeService.createStore(request);
             return ResponseEntity.ok(new SuccessResponse(true, "创建成功"));
-        } catch (StoreCreateException e) {
+        } catch (CreateException e) {
             log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "创建失败"));
         }
     }
 
     @ApiOperation("分页方式查询店铺")
-    @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public ResponseEntity<IPage<Store>> queryStorePaging(@RequestBody PageRequest pageRequest) {
+    @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
+    public ResponseEntity<IPage<Store>> queryStorePaging(@ApiParam(value = "页号") @PathVariable Long pageNo,
+                                                         @ApiParam(value = "也大小") @PathVariable Long pageSize) {
 //        try {
-        IPage<Store> storesPage = storeService.queryStoresByPage(pageRequest);
+        IPage<Store> storesPage = storeService.queryStoresByPage(pageNo, pageSize);
         return ResponseEntity.ok(storesPage);
 //        } catch (StoreCreateException e) {
 //            log.error("{}", e.getMessage());
 //            return ResponseEntity.ok();
 //        }
     }
+
 
 }

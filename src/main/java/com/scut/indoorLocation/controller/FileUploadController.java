@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 @Api(value = "文件上传接口", tags = "文件上传接口")
 @RestController
 @Slf4j
-@RequestMapping("/file")
+@RequestMapping("/api/file")
 public class FileUploadController {
 
     @Resource

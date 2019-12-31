@@ -16,7 +16,7 @@ server:
 logging:
   level:
     root: INFO
-    com.scut.indoorLocation.dao: INFO
+    com.scut.indoorLocation.dao: WARN
   file:
     path: "/root/Downloads/back_end/log"
 

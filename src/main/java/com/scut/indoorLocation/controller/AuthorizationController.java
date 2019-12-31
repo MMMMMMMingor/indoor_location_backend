@@ -39,9 +39,11 @@ public class AuthorizationController {
         // authenticationManager最终调用的是JWTUserDetailsService中的loadUserByUsername
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
+        // 获取用户ID
         Map<String, Object> claims = new HashMap<>();
         claims.put("uid", userBasicMapper.getUserIdByName(request.getUsername()));
 
+        // 生成Token并返回
         String jwt = jwtUtil.generateToken(request.getUsername(), claims);
         log.info("用户: {}, JWT: {}", request.getUsername(), jwt);
         return ResponseEntity.ok(new JWTResponse(jwt));

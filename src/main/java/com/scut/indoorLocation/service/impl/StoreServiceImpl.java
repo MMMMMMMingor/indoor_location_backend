@@ -2,10 +2,10 @@ package com.scut.indoorLocation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.scut.indoorLocation.dto.PageRequest;
 import com.scut.indoorLocation.dto.StoreInfoRequest;
 import com.scut.indoorLocation.entity.Store;
-import com.scut.indoorLocation.exception.StoreCreateException;
+import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.mapper.MenuItemMapper;
 import com.scut.indoorLocation.mapper.StoreMapper;
 import com.scut.indoorLocation.service.StoreService;
 import com.scut.indoorLocation.utility.JwtUtil;
@@ -29,8 +29,11 @@ public class StoreServiceImpl implements StoreService {
     @Resource
     private StoreMapper storeMapper;
 
+    @Resource
+    private MenuItemMapper menuItemMapper;
+
     @Override
-    public void createStore(StoreInfoRequest param) throws StoreCreateException {
+    public void createStore(StoreInfoRequest param) throws CreateException {
         String uid = jwtUtil.extractUidSubject(request);
 
         Store store = Store.builder()
@@ -41,14 +44,16 @@ public class StoreServiceImpl implements StoreService {
                 .build();
 
         if (storeMapper.insert(store) != 1)
-            throw new StoreCreateException("商铺创建异常");
+            throw new CreateException("商铺创建异常");
     }
 
     @Override
-    public IPage<Store> queryStoresByPage(PageRequest pageRequest) {
-        Page<Store> page = new Page<>(pageRequest.getPageNO(), pageRequest.getPageSize());
+    public IPage<Store> queryStoresByPage(Long pageNo, Long pageSize) {
+        Page<Store> page = new Page<>(pageNo, pageSize);
         return storeMapper.selectPage(page, null);
     }
+
+
 
 
 }

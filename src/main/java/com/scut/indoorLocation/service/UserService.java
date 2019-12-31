@@ -1,12 +1,11 @@
 package com.scut.indoorLocation.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserInformation;
 import com.scut.indoorLocation.exception.UserInfoModifyException;
 import com.scut.indoorLocation.exception.UserNameExistException;
-
-import java.util.List;
 
 /**
  * Created by Mingor on 2019/11/19 9:32
@@ -21,10 +20,10 @@ public interface UserService {
     void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException;
 
     /**
-     * 获取所有用户信息
+     * 分页方式获取用户信息
       * @return 所有用户信息
      */
-    List<UserInformation> getUserInfoList();
+    IPage<UserInformation> getUserInfoByPage(Long pageNO, Long pageSize);
 
     /**
      * 修改用户个人信息
