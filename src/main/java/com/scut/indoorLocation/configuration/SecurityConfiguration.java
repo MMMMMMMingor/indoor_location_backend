@@ -29,12 +29,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private JwtFilter jwtFilter;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(jwtUserDetailsService);
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -45,15 +45,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception{
-        // 关掉csrf，不然老有个csrftoken传上来；然后auth路径无权限，其他路径全都要验证;关掉session
+    protected void configure(HttpSecurity http) throws Exception {
+        // 关掉csrf，不然老有个csrf token传上来；然后auth路径无权限，其他路径全都要验证;关掉session
         http.csrf().disable()
                 .authorizeRequests().antMatchers("/auth",
-                                                            "/api/user/register",
-                                                            "/swagger-ui.html",
-                                                            "/v2/api-docs",
-                                                            "/swagger-resources/**",
-                                                            "/webjars/**").permitAll()
+                "/api/user/register",
+                "/swagger-ui.html",
+                "/v2/api-docs",
+                "/swagger-resources/**",
+                "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
