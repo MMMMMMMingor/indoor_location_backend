@@ -49,7 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // 关掉csrf，不然老有个csrftoken传上来；然后auth路径无权限，其他路径全都要验证;关掉session
         http.csrf().disable()
                 .authorizeRequests().antMatchers("/auth",
-                                                            "/user/register",
+                                                            "/api/user/register",
                                                             "/swagger-ui.html",
                                                             "/v2/api-docs",
                                                             "/swagger-resources/**",

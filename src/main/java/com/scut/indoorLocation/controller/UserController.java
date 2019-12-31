@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * Created by Mingor on 2019/11/18 23:35
@@ -23,7 +23,7 @@ import java.util.List;
 @Api(value = "用户信息接口", tags = "用户信息接口")
 @RestController
 @Slf4j
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Resource
@@ -66,10 +66,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserInfo(uid));
     }
 
-    @ApiOperation("查询所有用户")
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ResponseEntity<List<UserInformation>> getUsers(){
-        return ResponseEntity.ok(userService.getUserInfoList());
+    @ApiOperation("分页方式查询用户信息")
+    @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
+    public ResponseEntity<IPage<UserInformation>> getUsers(@ApiParam(value = "页号") @PathVariable Long pageNo,
+                                                           @ApiParam(value = "也大小") @PathVariable Long pageSize){
+        return ResponseEntity.ok(userService.getUserInfoByPage(pageNo, pageSize));
     }
 
 }
