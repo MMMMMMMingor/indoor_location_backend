@@ -44,7 +44,7 @@ public class MenuItemController {
     @RequestMapping(value = "/query/{storeId}/{pageNo}/{pageSize}", method = RequestMethod.GET)
     public ResponseEntity<IPage<MenuItem>> queryStorePaging(@ApiParam(value = "商铺ID") @PathVariable String storeId,
                                                             @ApiParam(value = "页号") @PathVariable Long pageNo,
-                                                            @ApiParam(value = "也大小") @PathVariable Long pageSize) {
+                                                            @ApiParam(value = "页大小") @PathVariable Long pageSize) {
         IPage<MenuItem> storesPage = menuService.queryMenuItemByPage(storeId, pageNo, pageSize);
         return ResponseEntity.ok(storesPage);
     }
