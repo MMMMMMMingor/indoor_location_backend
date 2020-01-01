@@ -21,7 +21,7 @@ public class Friend {
 
     private String userId;
 
-    private String friend_id;
+    private String friendId;
 
     private LocalDateTime createTime;
 

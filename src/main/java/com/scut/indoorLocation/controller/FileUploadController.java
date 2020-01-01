@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 @Api(value = "文件上传接口", tags = "文件上传接口")
 @RestController
 @Slf4j
-@RequestMapping("/api/file")
+@RequestMapping("/api/upload")
 public class FileUploadController {
 
     @Resource
@@ -37,7 +37,7 @@ public class FileUploadController {
     private ImageUtil imageUtil;
 
     @ApiOperation("上传图片")
-    @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = "multipart/*", headers = "content-type=multipart/form-date")
+    @RequestMapping(value = "/image", method = RequestMethod.POST, consumes = "multipart/*", headers = "content-type=multipart/form-date")
     public ResponseEntity<ImageUrlResponse> uploadImage(MultipartFile image) throws InterruptedException {
 
         try {
