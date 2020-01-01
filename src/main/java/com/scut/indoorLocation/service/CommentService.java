@@ -6,7 +6,7 @@ import com.scut.indoorLocation.exception.CreateException;
 /**
  * Created by Mingor on 2019/12/31 11:38
  */
-public interface CommentService {
+public interface CommentService  {
 
     void createComment(CommentRequest commentRequest) throws CreateException;
 

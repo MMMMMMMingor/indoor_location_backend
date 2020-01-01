@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserAndPassRequest {
 
-    @ApiModelProperty(value = "用户名(账号)", name = "username", example = "foobar")
+    @ApiModelProperty(value = "用户名(账号)", name = "username", example = "foo")
     private String username;
 
-    @ApiModelProperty(value = "密码", name = "password", example = "123456")
+    @ApiModelProperty(value = "密码", name = "password", example = "bar")
     private String password;
 
 }

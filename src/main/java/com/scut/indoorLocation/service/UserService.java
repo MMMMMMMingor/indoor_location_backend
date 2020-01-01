@@ -1,6 +1,7 @@
 package com.scut.indoorLocation.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserInformation;
@@ -10,7 +11,7 @@ import com.scut.indoorLocation.exception.UserNameExistException;
 /**
  * Created by Mingor on 2019/11/19 9:32
  */
-public interface UserService {
+public interface UserService extends IService<UserInformation> {
 
     /**
      * 用户注册

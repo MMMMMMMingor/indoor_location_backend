@@ -2,6 +2,7 @@ CREATE DATABASE location DEFAULT CHARACTER SET utf8mb4 ;
 
 USE location;
 
+# 用户基础信息
 CREATE TABLE location.user_basic (
     user_id VARCHAR(32) NOT NULL COMMENT '主键ID、用户ID',
     username VARCHAR(45) NOT NULL UNIQUE COMMENT '账号',
@@ -10,6 +11,7 @@ CREATE TABLE location.user_basic (
     INDEX idx_username (username)
 )ENGINE = InnoDB;
 
+# 用户信息
 CREATE TABLE location.user_information(
     user_id VARCHAR(32) NOT NULL COMMENT '主键ID',
     nickname VARCHAR(12) DEFAULT '未命名' COMMENT '昵称',
@@ -25,6 +27,7 @@ CREATE TABLE location.user_information(
     FOREIGN KEY (user_id) REFERENCES user_basic (user_id) ON DELETE CASCADE
 )ENGINE = InnoDB;
 
+# 商铺信息
 CREATE TABLE location.store(
     store_id VARCHAR(32) NOT NULL COMMENT '主键ID',
     owner_id VARCHAR(32) NOT NULL COMMENT '店铺拥有者ID',
@@ -36,6 +39,7 @@ CREATE TABLE location.store(
     FOREIGN KEY (owner_id) REFERENCES user_basic (user_id) ON DELETE CASCADE
 )ENGINE = InnoDB;
 
+# 菜单信息
 CREATE TABLE location.menu_item(
     menu_id VARCHAR(32) NOT NULL COMMENT '主键ID',
     store_id VARCHAR(32) NOT NULL COMMENT '店铺ID',
@@ -48,6 +52,7 @@ CREATE TABLE location.menu_item(
     FOREIGN KEY (store_id) REFERENCES store (store_id) ON DELETE CASCADE
 )ENGINE = InnoDB;
 
+# 评论信息
 CREATE TABLE location.comment(
     comment_id VARCHAR(32) NOT NULL COMMENT '主键ID',
     store_id VARCHAR(32) NOT NULL COMMENT '店铺ID',
@@ -61,3 +66,26 @@ CREATE TABLE location.comment(
     FOREIGN KEY (store_id) REFERENCES store (store_id) ON DELETE CASCADE
 )ENGINE = InnoDB;
 
+# 收藏信息
+CREATE TABLE location.collection(
+    collection_id VARCHAR(32) NOT NULL COMMENT '主键ID',
+    user_id VARCHAR(32) NOT NULL COMMENT '用户ID',
+    store_id VARCHAR(32) NOT NULL COMMENT '商铺ID',
+    create_time DATETIME NOT NULL COMMENT '创建时间',
+    PRIMARY KEY (collection_id),
+    INDEX idx_user_id (user_id),
+    FOREIGN KEY (user_id) REFERENCES user_basic (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (store_id) REFERENCES store (store_id) ON DELETE CASCADE
+)ENGINE = InnoDB;
+
+# 交友信息
+CREATE TABLE location.friends(
+    id VARCHAR(32) NOT NULL COMMENT '主键ID',
+    user_id VARCHAR(32) NOT NULL COMMENT '用户ID',
+    friend_id VARCHAR(32) NOT NULL COMMENT '朋友ID',
+    create_time DATETIME NOT NULL COMMENT '创建时间',
+    PRIMARY KEY (id),
+    INDEX idx_user_id (user_id),
+    FOREIGN KEY (user_id) REFERENCES user_basic (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (friend_id) REFERENCES user_basic (user_id) ON DELETE CASCADE
+)ENGINE = InnoDB;

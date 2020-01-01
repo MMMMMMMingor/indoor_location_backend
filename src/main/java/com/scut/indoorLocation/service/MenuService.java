@@ -8,7 +8,7 @@ import com.scut.indoorLocation.exception.CreateException;
 /**
  * Created by Mingor on 2019/12/31 10:24
  */
-public interface MenuService {
+public interface MenuService  {
 
     /**
      * 创建菜单项

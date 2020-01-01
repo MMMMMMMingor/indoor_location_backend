@@ -2,6 +2,7 @@ package com.scut.indoorLocation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserBasic;
@@ -26,7 +27,7 @@ import java.time.LocalDateTime;
  */
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserInformationMapper, UserInformation> implements UserService {
 
     @Resource
     private HttpServletRequest request;
