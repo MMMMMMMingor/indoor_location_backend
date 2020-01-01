@@ -1,17 +1,17 @@
 package com.scut.indoorLocation.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.CommentRequest;
 import com.scut.indoorLocation.dto.SuccessResponse;
+import com.scut.indoorLocation.entity.Comment;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.service.CommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -27,6 +27,7 @@ public class CommentController {
     @Resource
     private CommentService commentService;
 
+
     @ApiOperation("创建评论信息")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<SuccessResponse> createComment(@RequestBody CommentRequest commentRequest) {
@@ -37,6 +38,16 @@ public class CommentController {
             log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "创建失败"));
         }
+    }
+
+
+    @ApiOperation("分页方式查询店铺的评论")
+    @RequestMapping(value = "/query/{storeId}/{pageNo}/{pageSize}", method = RequestMethod.GET)
+    public ResponseEntity<IPage<Comment>> queryStorePaging(@ApiParam(value = "商铺ID") @PathVariable String storeId,
+                                                           @ApiParam(value = "页号") @PathVariable Long pageNo,
+                                                           @ApiParam(value = "页大小") @PathVariable Long pageSize) {
+        IPage<Comment> commentsPage = commentService.queryCommentByPage(storeId, pageNo, pageSize);
+        return ResponseEntity.ok(commentsPage);
     }
 
 }
