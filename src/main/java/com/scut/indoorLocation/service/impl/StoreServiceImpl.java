@@ -6,7 +6,6 @@ import com.scut.indoorLocation.dto.StoreInfoRequest;
 import com.scut.indoorLocation.entity.Store;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.NotStoreOwnerException;
-import com.scut.indoorLocation.mapper.MenuItemMapper;
 import com.scut.indoorLocation.mapper.StoreMapper;
 import com.scut.indoorLocation.service.StoreService;
 import com.scut.indoorLocation.utility.JwtUtil;
@@ -30,9 +29,6 @@ public class StoreServiceImpl implements StoreService {
 
     @Resource
     private StoreMapper storeMapper;
-
-    @Resource
-    private MenuItemMapper menuItemMapper;
 
     @Override
     public void createStore(StoreInfoRequest param) throws CreateException {
