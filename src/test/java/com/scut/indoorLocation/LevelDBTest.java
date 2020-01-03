@@ -3,7 +3,6 @@ package com.scut.indoorLocation;
 import com.scut.indoorLocation.entity.UserBasic;
 import com.scut.indoorLocation.utility.LevelDBUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-@Ignore
 public class LevelDBTest {
 
     @Autowired
@@ -36,7 +34,7 @@ public class LevelDBTest {
     }
 
     @Test
-    public void test2(){
+    public void test2() {
         List<String> keys = levelDBUtil.getKeys();
         for (String key : keys) {
             log.info(key + ": " + levelDBUtil.get(key));
@@ -44,7 +42,7 @@ public class LevelDBTest {
     }
 
     @Test
-    public void test3(){
+    public void test3() {
         List<String> keys = levelDBUtil.getKeys();
         for (String key : keys) {
             String value = levelDBUtil.get(key, String.class);
@@ -53,14 +51,20 @@ public class LevelDBTest {
     }
 
     @Test
-    public void test4(){
-        UserBasic ming = levelDBUtil.get("ming", UserBasic.class);
+    public void test4() {
+        UserBasic userBasic = UserBasic.builder()
+                .id("1")
+                .username("test")
+                .password("123456")
+                .build();
+
+        levelDBUtil.put("key", userBasic);
+        UserBasic ming = levelDBUtil.get("key", UserBasic.class);
         log.info(ming.toString());
     }
 
     @Test
-
-    public void test5(){
+    public void test5() {
         List<String> keys = levelDBUtil.getKeys();
         for (String key : keys) {
             levelDBUtil.delete(key);

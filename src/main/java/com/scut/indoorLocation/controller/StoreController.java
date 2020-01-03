@@ -5,6 +5,7 @@ import com.scut.indoorLocation.dto.StoreInfoRequest;
 import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.entity.Store;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.NotStoreOwnerException;
 import com.scut.indoorLocation.service.StoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,6 +52,19 @@ public class StoreController {
 //            log.error("{}", e.getMessage());
 //            return ResponseEntity.ok();
 //        }
+    }
+
+
+    @ApiOperation("修改店铺信息")
+    @RequestMapping(value = "/modify", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse> modifyStore(@RequestBody StoreInfoRequest param) {
+        try {
+            storeService.modifyStoreInfo(param);
+            return ResponseEntity.ok(new SuccessResponse(true, "店铺信息修改成功"));
+        } catch (NotStoreOwnerException e) {
+            log.error("店铺信息修改异常 {}", e.getMessage());
+            return ResponseEntity.ok(new SuccessResponse(false, "店铺信息修改失败"));
+        }
     }
 
 

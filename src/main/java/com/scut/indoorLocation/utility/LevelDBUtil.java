@@ -10,6 +10,8 @@ import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.json.JacksonJsonParser;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
