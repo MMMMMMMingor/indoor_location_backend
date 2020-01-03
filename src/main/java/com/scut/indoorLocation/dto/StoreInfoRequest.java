@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StoreInfoRequest {
 
+    @ApiModelProperty(value = "店铺ID", name = "storeId", example = "54f300588c849624b9cc4910482afb99")
+    private String storeId;
+
     @ApiModelProperty(value = "店铺名", name = "storeName", example = "原始烧烤")
     private String storeName;
 

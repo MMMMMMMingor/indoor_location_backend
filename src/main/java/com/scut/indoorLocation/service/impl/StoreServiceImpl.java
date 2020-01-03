@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.scut.indoorLocation.dto.StoreInfoRequest;
 import com.scut.indoorLocation.entity.Store;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.NotStoreOwnerException;
 import com.scut.indoorLocation.mapper.MenuItemMapper;
 import com.scut.indoorLocation.mapper.StoreMapper;
 import com.scut.indoorLocation.service.StoreService;
@@ -55,7 +56,23 @@ public class StoreServiceImpl implements StoreService {
         return storeMapper.selectPage(page, null);
     }
 
+    @Override
+    public void modifyStoreInfo(StoreInfoRequest param) throws NotStoreOwnerException {
+        //提取uid
+        String uid = jwtUtil.extractUidSubject(this.request);
 
+        Store store = storeMapper.selectById(param.getStoreId());
+        if(!store.getOwnerId().equals(uid))
+            throw new NotStoreOwnerException("该用户不是店铺的所有人");
+
+        Store newStore = Store.builder()
+                .storeName(param.getStoreName() == null ? store.getStoreName() : param.getStoreName())
+                .address(param.getAddress() == null ? store.getAddress() : param.getAddress())
+                .businessTime(param.getBusinessTime() == null ? store.getBusinessTime() : param.getBusinessTime())
+                .build();
+
+        storeMapper.updateById(newStore);
+    }
 
 
 }

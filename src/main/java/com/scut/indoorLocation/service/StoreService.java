@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.StoreInfoRequest;
 import com.scut.indoorLocation.entity.Store;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.NotStoreOwnerException;
 
 
 /**
@@ -26,5 +27,10 @@ public interface StoreService {
     IPage<Store> queryStoresByPage(Long pageNo, Long pageSize);
 
 
+    /**
+     * 修改店铺信息
+     * @param param 新的店铺信息
+     */
+    void modifyStoreInfo(StoreInfoRequest param) throws NotStoreOwnerException;
 
 }
