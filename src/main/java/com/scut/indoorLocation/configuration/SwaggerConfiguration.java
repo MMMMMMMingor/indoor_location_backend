@@ -31,8 +31,8 @@ public class SwaggerConfiguration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("BBS接口文档")
-                .description("BBS相关接口的文档")
+                .title("室内定位系统——接口文档")
+                .description("室内定位系统相关接口的文档")
                 //.termsOfServiceUrl("207.148.112.5:8080")
                 .version("1.0")
                 .build();
