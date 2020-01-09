@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import org.fusesource.mqtt.client.*;
 import org.springframework.stereotype.Component;
 
-import java.net.URISyntaxException;
 
 /**
  * MQTT客户端
@@ -14,10 +13,15 @@ import java.net.URISyntaxException;
 public class MqttClientUtil {
 
     private MQTT mqtt;
+    private BlockingConnection connection;
 
-    public MqttClientUtil() throws URISyntaxException {
-        mqtt = new MQTT();
-        mqtt.setHost("39.99.131.85", 1883);
+
+    public MqttClientUtil() throws Exception {
+        this.mqtt = new MQTT();
+        this.mqtt.setHost("39.99.131.85", 1883);
+
+        this.connection = mqtt.blockingConnection();
+        this.connection.connect();
     }
 
     /**
@@ -26,10 +30,8 @@ public class MqttClientUtil {
      * @param message 消息
      */
     public void publish (String topic, String message) throws Exception {
-        BlockingConnection connection = mqtt.blockingConnection();
-        connection.connect();
 
-        connection.publish(topic, message.getBytes(), QoS.AT_LEAST_ONCE, false);
+        this.connection.publish(topic, message.getBytes(), QoS.AT_LEAST_ONCE, false);
     }
 
     /**
@@ -40,11 +42,10 @@ public class MqttClientUtil {
      * @return pojo
      */
     public <T> T subscribe(String topic, Class<T> clazz) throws Exception {
-        BlockingConnection connection = mqtt.blockingConnection();
-        connection.connect();
-        connection.subscribe(new Topic[]{new Topic("/test", QoS.AT_LEAST_ONCE)});
 
-        Message message = connection.receive();
+        this.connection.subscribe(new Topic[]{new Topic("/test", QoS.AT_LEAST_ONCE)});
+
+        Message message = this.connection.receive();
 
         return JSON.parseObject(message.getPayload(), clazz);
     }
