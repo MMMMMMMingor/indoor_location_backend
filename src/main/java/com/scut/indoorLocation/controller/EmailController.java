@@ -1,0 +1,35 @@
+package com.scut.indoorLocation.controller;
+
+import com.scut.indoorLocation.dto.SuccessResponse;
+import com.scut.indoorLocation.dto.UserAndPassRequest;
+import com.scut.indoorLocation.exception.UserNameExistException;
+import com.scut.indoorLocation.service.MailService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+
+
+/**
+ * Created by Mingor on 2020/1/13 15:07
+ */
+@Api(value = "用户信息接口", tags = "用户信息接口")
+@RestController
+@Slf4j
+@RequestMapping("/api/email")
+public class EmailController {
+
+    @Resource
+    private MailService mailService;
+
+    @ApiOperation("发送邮件验证码")
+    @RequestMapping(value = "/verifyCode/{email}", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse> sendEmail(@PathVariable String email) {
+        mailService.sendMail(email, "邮件验证码");
+        return ResponseEntity.ok(new SuccessResponse(true, "验证码已发送至" + email));
+    }
+
+}

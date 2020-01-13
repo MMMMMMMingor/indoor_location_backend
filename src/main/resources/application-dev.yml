@@ -6,6 +6,20 @@ spring:
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
+  mail:
+    host: smtp.163.com
+    username: location_2019@163.com
+    password: location2019
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+      default-encoding:
+        UTF-8
+
 
 #tomcat参数
 server:
@@ -27,3 +41,5 @@ levelDB:
 image:
   dir:
     path: "C:/Users/Mingor/Desktop/室内定位服务项目/indoor_location/images"
+
+

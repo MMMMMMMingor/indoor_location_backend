@@ -2,19 +2,19 @@ package com.scut.indoorLocation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.scut.indoorLocation.dto.UserAndPassRequest;
+import com.scut.indoorLocation.dto.RegisterRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserBasic;
 import com.scut.indoorLocation.entity.UserInformation;
 import com.scut.indoorLocation.exception.UserInfoModifyException;
 import com.scut.indoorLocation.exception.UserNameExistException;
+import com.scut.indoorLocation.exception.VerifyCodeException;
 import com.scut.indoorLocation.mapper.UserBasicMapper;
 import com.scut.indoorLocation.mapper.UserInformationMapper;
+import com.scut.indoorLocation.service.MailService;
 import com.scut.indoorLocation.service.UserService;
 import com.scut.indoorLocation.utility.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,14 +45,23 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserInformationMapper userInformationMapper;
 
+    @Resource
+    private MailService mailService;
+
     @Override
-    @Transactional(rollbackFor = UserNameExistException.class)
-    public void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException {
-        String encryptedPassword = passwordEncoder.encode(userAndPassRequest.getPassword()); //对密码进行加密
+    @Transactional(rollbackFor = {UserNameExistException.class, VerifyCodeException.class})
+    public void userRegister(RegisterRequest registerRequest) throws UserNameExistException, VerifyCodeException {
+
+        // 验证验证码是否正确
+        mailService.validateCode(registerRequest.getEmail(), registerRequest.getVerifyCode());
+
+        // 对密码进行加密
+        String encryptedPassword = passwordEncoder.encode(registerRequest.getPassword()); //对密码进行加密
 
         UserBasic userBasic = UserBasic.builder()
-                .username(userAndPassRequest.getUsername())
+                .username(registerRequest.getUsername())
                 .password(encryptedPassword)
+                .email(registerRequest.getEmail())
                 .build();
 
         userBasicMapper.insert(userBasic);

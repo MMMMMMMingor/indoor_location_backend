@@ -7,6 +7,7 @@ CREATE TABLE location.user_basic (
     user_id VARCHAR(32) NOT NULL COMMENT '主键ID、用户ID',
     username VARCHAR(45) NOT NULL UNIQUE COMMENT '账号',
     password VARCHAR(100) NOT NULL COMMENT '密码',
+    email VARCHAR(100) NOT NULL COMMENT '邮箱',
     PRIMARY KEY (user_id),
     INDEX idx_username (username)
 )ENGINE = InnoDB;

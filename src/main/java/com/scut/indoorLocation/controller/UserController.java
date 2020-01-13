@@ -1,12 +1,13 @@
 package com.scut.indoorLocation.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.scut.indoorLocation.dto.RegisterRequest;
 import com.scut.indoorLocation.dto.SuccessResponse;
-import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserInformation;
 import com.scut.indoorLocation.exception.UserInfoModifyException;
 import com.scut.indoorLocation.exception.UserNameExistException;
+import com.scut.indoorLocation.exception.VerifyCodeException;
 import com.scut.indoorLocation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,14 +32,17 @@ public class UserController {
 
     @ApiOperation("新用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<SuccessResponse> register(@RequestBody UserAndPassRequest request) {
+    public ResponseEntity<SuccessResponse> register(@RequestBody RegisterRequest request) {
         try {
             userService.userRegister(request);
             log.info("用户: {} 注册成功!",request.getUsername());
             return ResponseEntity.ok(new SuccessResponse(true, "注册成功"));
         } catch (UserNameExistException e) {
-            log.error("用户: {} 注册失败!", request.getUsername());
+            log.error("用户: {} 注册失败!, 用户名已存在", request.getUsername());
             return ResponseEntity.ok(new SuccessResponse(false,"用户名已存在"));
+        } catch (VerifyCodeException e) {
+            log.error("用户: {} 注册失败!, 验证码错误", request.getUsername());
+            return ResponseEntity.ok(new SuccessResponse(false,"验证码错误"));
         }
     }
 

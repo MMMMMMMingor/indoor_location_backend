@@ -1,7 +1,6 @@
 package com.scut.indoorLocation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 /**
  * Created by Mingor on 2019/11/18 23:35
@@ -31,5 +29,8 @@ public class UserBasic {
 
     @JsonIgnore
     private String password;
+
+    @JsonIgnore
+    private String email;
 
 }

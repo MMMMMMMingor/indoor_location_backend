@@ -1,11 +1,13 @@
 package com.scut.indoorLocation.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.scut.indoorLocation.dto.RegisterRequest;
 import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.dto.UserInfoRequest;
 import com.scut.indoorLocation.entity.UserInformation;
 import com.scut.indoorLocation.exception.UserInfoModifyException;
 import com.scut.indoorLocation.exception.UserNameExistException;
+import com.scut.indoorLocation.exception.VerifyCodeException;
 
 /**
  * Created by Mingor on 2019/11/19 9:32
@@ -14,10 +16,10 @@ public interface UserService {
 
     /**
      * 用户注册
-     * @param userAndPassRequest 用户名（账号）、密码
+     * @param registerRequest 用户名（账号）、密码、邮箱、验证码
      * @throws UserNameExistException 用户名已存在
      */
-    void userRegister(UserAndPassRequest userAndPassRequest) throws UserNameExistException;
+    void userRegister(RegisterRequest registerRequest) throws UserNameExistException, VerifyCodeException;
 
     /**
      * 分页方式获取用户信息
