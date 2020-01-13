@@ -9,6 +9,19 @@ spring:
       initial-size: 8
       min-idle: 1
       max-active: 20
+  mail:
+    host: smtp.163.com
+    username: location_2019@163.com
+    password: location2019
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+      default-encoding:
+        UTF-8
 
 server:
   port: 8090
