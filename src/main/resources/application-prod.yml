@@ -10,6 +10,8 @@ spring:
       min-idle: 1
       max-active: 20
   mail:
+    port: 465
+    protocol: smtp
     host: smtp.163.com
     username: location_2019@163.com
     password: location2019
@@ -20,8 +22,12 @@ spring:
           starttls:
             enable: true
             required: true
-      default-encoding:
-        UTF-8
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+    default-encoding: UTF-8
 
 server:
   port: 8090
