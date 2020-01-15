@@ -1,8 +1,6 @@
 package com.scut.indoorLocation.controller;
 
 import com.scut.indoorLocation.dto.SuccessResponse;
-import com.scut.indoorLocation.dto.UserAndPassRequest;
-import com.scut.indoorLocation.exception.UserNameExistException;
 import com.scut.indoorLocation.service.MailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +14,7 @@ import javax.annotation.Resource;
 /**
  * Created by Mingor on 2020/1/13 15:07
  */
-@Api(value = "用户信息接口", tags = "用户信息接口")
+@Api(value = "邮件接口", tags = "邮件接口")
 @RestController
 @Slf4j
 @RequestMapping("/api/email")

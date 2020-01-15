@@ -18,7 +18,6 @@ import javax.annotation.Resource;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-@Ignore
 class MailServiceTest {
 
     @Resource

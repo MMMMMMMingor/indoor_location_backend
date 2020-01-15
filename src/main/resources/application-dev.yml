@@ -6,10 +6,12 @@ spring:
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
+
   mail:
     host: smtp.163.com
     username: location_2019@163.com
     password: location2019
+    port: 465
     properties:
       mail:
         smtp:
@@ -17,8 +19,11 @@ spring:
           starttls:
             enable: true
             required: true
-      default-encoding:
-        UTF-8
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
 
 
 #tomcat参数

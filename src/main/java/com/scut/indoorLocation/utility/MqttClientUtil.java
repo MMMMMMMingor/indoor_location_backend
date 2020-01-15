@@ -2,6 +2,7 @@ package com.scut.indoorLocation.utility;
 
 import com.alibaba.fastjson.JSON;
 import org.fusesource.mqtt.client.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 
@@ -19,9 +20,7 @@ public class MqttClientUtil {
     public MqttClientUtil() throws Exception {
         this.mqtt = new MQTT();
         this.mqtt.setHost("39.99.131.85", 1883);
-
         this.connection = mqtt.blockingConnection();
-        this.connection.connect();
     }
 
     /**
@@ -29,7 +28,9 @@ public class MqttClientUtil {
      * @param topic topic
      * @param message 消息
      */
+    @Async
     public void publish (String topic, String message) throws Exception {
+        this.connection.connect();
 
         this.connection.publish(topic, message.getBytes(), QoS.AT_LEAST_ONCE, false);
     }
@@ -43,6 +44,7 @@ public class MqttClientUtil {
      */
     public <T> T subscribe(String topic, Class<T> clazz) throws Exception {
 
+        this.connection.connect();
         this.connection.subscribe(new Topic[]{new Topic("/test", QoS.AT_LEAST_ONCE)});
 
         Message message = this.connection.receive();
