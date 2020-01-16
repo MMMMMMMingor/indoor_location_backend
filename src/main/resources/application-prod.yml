@@ -9,12 +9,12 @@ spring:
       initial-size: 8
       min-idle: 1
       max-active: 20
+
   mail:
-    port: 465
-    protocol: smtp
     host: smtp.163.com
     username: location_2019@163.com
     password: location2019
+    port: 465
     properties:
       mail:
         smtp:
@@ -27,7 +27,6 @@ spring:
           socketFactory:
             port: 465
             class: javax.net.ssl.SSLSocketFactory
-    default-encoding: UTF-8
 
 server:
   port: 8090
