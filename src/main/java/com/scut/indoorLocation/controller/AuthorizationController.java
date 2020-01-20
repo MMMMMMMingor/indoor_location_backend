@@ -1,7 +1,6 @@
 package com.scut.indoorLocation.controller;
 
 import com.scut.indoorLocation.dto.JWTResponse;
-import com.scut.indoorLocation.dto.UserAndPassRequest;
 import com.scut.indoorLocation.mapper.UserBasicMapper;
 import com.scut.indoorLocation.utility.JwtUtil;
 import io.swagger.annotations.Api;
@@ -34,18 +33,19 @@ public class AuthorizationController {
     private JwtUtil jwtUtil;
 
     @ApiOperation("登录认证")
-    @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public ResponseEntity<JWTResponse> auth(@RequestBody UserAndPassRequest request){
+    @RequestMapping(value = "/auth/{username}/{password}", method = RequestMethod.POST)
+    public ResponseEntity<JWTResponse> auth(@PathVariable("username") String username,
+                                            @PathVariable("password") String password){
         // authenticationManager最终调用的是JWTUserDetailsService中的loadUserByUsername
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         // 获取用户ID
         Map<String, Object> claims = new HashMap<>();
-        claims.put("uid", userBasicMapper.getUserIdByName(request.getUsername()));
+        claims.put("uid", userBasicMapper.getUserIdByName(username));
 
         // 生成Token并返回
-        String jwt = jwtUtil.generateToken(request.getUsername(), claims);
-        log.info("用户: {}, JWT: {}", request.getUsername(), jwt);
+        String jwt = jwtUtil.generateToken(username, claims);
+        log.info("用户: {}, JWT: {}", username, jwt);
         return ResponseEntity.ok(new JWTResponse(jwt));
 
     }

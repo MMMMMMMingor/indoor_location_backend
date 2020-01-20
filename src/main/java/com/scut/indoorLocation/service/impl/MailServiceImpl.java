@@ -6,6 +6,7 @@ import com.scut.indoorLocation.utility.LevelDBUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,6 +37,7 @@ public class MailServiceImpl implements MailService {
 
 
     @Override
+    @Async
     public void sendMail(String to, String subject) {
         // 生成验证码
         String verifyCode = genVerifyCode();

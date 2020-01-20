@@ -66,11 +66,11 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(httpServletRequest,httpServletResponse);
         }catch (ExpiredJwtException e){
             // token过期
-            log.error("JWT过期 {}",e.getMessage());
+            log.info("JWT过期 {}",e.getMessage());
             dealWithError(httpServletResponse, "JWT过期，请重新认证");
         }catch (SignatureException e){
             // token无效
-            log.error("JWT无效 {}",e.getMessage());
+            log.info("JWT无效 {}",e.getMessage());
             dealWithError(httpServletResponse, "JWT错误，请输入正确的token");
         }
 

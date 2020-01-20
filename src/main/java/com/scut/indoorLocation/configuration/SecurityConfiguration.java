@@ -48,7 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // 关掉csrf，不然老有个csrf token传上来；然后auth路径无权限，其他路径全都要验证;关掉session
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/auth",
+                .authorizeRequests().antMatchers("/auth/**/**",
                 "/api/user/register",
                 "/api/email/**",
                 "/swagger-ui.html",
