@@ -74,6 +74,7 @@ public class UserServiceImpl implements UserService {
                 .userId(user_id)
                 .createTime(LocalDateTime.now())
                 .updateTime(LocalDateTime.now())
+                .avatarUrl("http://39.99.131.85/images/719eb343c7e8f8f6e4a3b5308a1c7b6cc3fded57.jpg")
                 .build();
 
         if (userInformationMapper.insert(userInformation) != 1)

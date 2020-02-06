@@ -27,10 +27,9 @@ spring:
           socketFactory:
             port: 465
             class: javax.net.ssl.SSLSocketFactory
-  http:
+  servlet:
     multipart:
-      maxFileSize: 5MB #tomcat参数
-      maxRequestSize: 5MB
+      max-file-size: 5MB #tomcat参数
 
 server:
   port: 8090
