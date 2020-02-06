@@ -24,11 +24,15 @@ spring:
           socketFactory:
             port: 465
             class: javax.net.ssl.SSLSocketFactory
+  servlet:
+    multipart:
+      max-file-size: 5MB
 
-
-#tomcat参数
+# tomcat 参数
 server:
   port: 8080
+  tomcat:
+    max-http-form-post-size: 5MB
 
 #日志
 logging:

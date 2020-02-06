@@ -73,7 +73,7 @@ public class UserController {
     @ApiOperation("分页方式查询用户信息")
     @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
     public ResponseEntity<IPage<UserInformation>> getUsers(@ApiParam(value = "页号") @PathVariable Long pageNo,
-                                                           @ApiParam(value = "也大小") @PathVariable Long pageSize){
+                                                           @ApiParam(value = "页大小") @PathVariable Long pageSize){
         return ResponseEntity.ok(userService.getUserInfoByPage(pageNo, pageSize));
     }
 

@@ -6,6 +6,7 @@ import com.scut.indoorLocation.utility.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,7 +46,7 @@ public class AuthorizationController {
 
         // 生成Token并返回
         String jwt = jwtUtil.generateToken(username, claims);
-        log.info("用户: {}, JWT: {}", username, jwt);
+        log.info("登录用户: {}, JWT: {}", username, jwt);
         return ResponseEntity.ok(new JWTResponse(jwt));
 
     }

@@ -31,12 +31,12 @@ public class FriendController {
 
 
     @ApiOperation("添加好友")
-    @RequestMapping(value = "/create/{storeId}", method = RequestMethod.POST)
-    public ResponseEntity<SuccessResponse> createCollection(@ApiParam(value = "商铺ID") @PathVariable String storeId) {
+    @RequestMapping(value = "/create/{userId}", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse> createCollection(@ApiParam(value = "商铺ID") @PathVariable String userId) {
 
         //保存collection
         try {
-            friendService.createCollection(storeId);
+            friendService.createCollection(userId);
             return ResponseEntity.ok(new SuccessResponse(true, "添加成功"));
         } catch (CreateException e) {
             log.error("{}", e.getMessage());
