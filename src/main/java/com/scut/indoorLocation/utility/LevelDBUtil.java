@@ -10,8 +10,6 @@ import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.json.JacksonJsonParser;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -96,7 +94,7 @@ public class LevelDBUtil {
      * @param <T> 泛型
      * @return value 值
      */
-    public <T> T get(String key, Class clazz) {
+    public <T> T get(String key, Class<?> clazz) {
         byte[] val = null;
         try {
             val = db.get(key.getBytes(CHARSET));
