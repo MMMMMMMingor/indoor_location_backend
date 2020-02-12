@@ -27,4 +27,10 @@ public class MenuItemRequest {
 
     @ApiModelProperty(value = "价格", name = "imageUrl", example = "http://39.99.131.85/images/b326cdad97ca4dd79012c73886fd247c.jpeg")
     private String imageUrl;
+
+    /**
+     * Add by hxy 2020/02/11
+     */
+    @ApiModelProperty(value = "菜单ID", name = "MenuId", example = "53c25fe9d88b27e0c5d10dc418068e09")
+    private String MenuId;
 }

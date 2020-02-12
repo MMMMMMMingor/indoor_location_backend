@@ -5,6 +5,8 @@ import com.scut.indoorLocation.dto.MenuItemRequest;
 import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.entity.MenuItem;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.NotExistException;
+import com.scut.indoorLocation.exception.NotStoreOwnerException;
 import com.scut.indoorLocation.service.MenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +49,45 @@ public class MenuItemController {
                                                             @ApiParam(value = "页大小") @PathVariable Long pageSize) {
         IPage<MenuItem> storesPage = menuService.queryMenuItemByPage(storeId, pageNo, pageSize);
         return ResponseEntity.ok(storesPage);
+    }
+
+    /**
+     * Add by hxy 2020/02/11
+     */
+    @ApiOperation("修改菜单信息")
+    @RequestMapping(value = "/modify", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse> modifyMenuItem(@RequestBody MenuItemRequest param) {
+        try {
+            menuService.modifyMenuInfo(param);
+            return ResponseEntity.ok(new SuccessResponse(true, "菜单项信息修改成功"));
+        } catch (NotStoreOwnerException e) {
+            log.error("菜单项信息修改异常 {}", e.getMessage());
+            return ResponseEntity.ok(new SuccessResponse(false, "用户非店铺主人，修改失败"));
+        }
+        catch(NotExistException ex){
+            log.error("菜单项修改异常{}", ex.getMessage());
+            return ResponseEntity.ok(new SuccessResponse(false, "菜单项不存在，修改失败"));
+        }
+    }
+
+    /**
+     * Add by hxy 2020/01/10
+     */
+
+    @ApiOperation("删除菜单项")
+    @RequestMapping(value = "/delete/{MenuId}", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse> deleteMenuItem(@ApiParam (value="MenuID")@PathVariable String MenuId) {
+        try {
+            menuService.deleteMenuItem(MenuId);
+            return ResponseEntity.ok(new SuccessResponse(true, "菜单项删除成功"));
+        } catch (NotStoreOwnerException e) {
+            log.error("菜单项删除异常{}", e.getMessage());
+            return ResponseEntity.ok(new SuccessResponse(false, "非店铺拥有者，删除失败"));
+        } catch (NotExistException ex) {
+            log.error("菜单项删除异常{}", ex.getMessage());
+            return ResponseEntity.ok(new SuccessResponse(false, "菜单项不存在，删除失败"));
+        }
+
     }
 
 
