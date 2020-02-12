@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scut.indoorLocation.entity.Collection;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.DeleteException;
 import com.scut.indoorLocation.mapper.CollectionMapper;
 import com.scut.indoorLocation.service.CollectionService;
 import com.scut.indoorLocation.utility.JwtUtil;
@@ -59,6 +60,21 @@ public class CollectionServiceImpl extends ServiceImpl<CollectionMapper, Collect
         // 分页查询
         return collectionMapper.selectPage(page, wrapper);
 
+    }
+    @Override
+    public void deleteCollection(String collectionId) throws DeleteException {
+        //获取用户ID
+        String uid = jwtUtil.extractUidSubject(request);
+
+        Collection collection = Collection.builder()
+                .userId(uid)
+                .collectionId(collectionId)
+                .createTime(LocalDateTime.now())
+                .build();
+
+        //保存
+        if (collectionMapper.deleteById(collection.getCollectionId()) != 1)
+            throw new DeleteException("收藏信息创建异常");
     }
 
 }
