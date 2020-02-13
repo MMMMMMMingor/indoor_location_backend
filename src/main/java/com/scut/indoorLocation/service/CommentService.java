@@ -2,8 +2,10 @@ package com.scut.indoorLocation.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.CommentRequest;
+import com.scut.indoorLocation.dto.GetAverageCommentPointRequest;
 import com.scut.indoorLocation.entity.Comment;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.GetAverageCommentPointErrorException;
 
 /**
  * Created by Mingor on 2019/12/31 11:38
@@ -26,4 +28,13 @@ public interface CommentService  {
      */
     IPage<Comment> queryCommentByPage(String storeId, Long pageNO, Long pageSize);
 
+
+    /**
+     * 获取指定店铺的平均评论评分
+     * @param getAverageCommentPointRequest 获取平均评分请求
+     * @return 平均评分（double）
+     */
+    double getAverageCommentPoint(GetAverageCommentPointRequest getAverageCommentPointRequest) throws GetAverageCommentPointErrorException;
+
 }
+

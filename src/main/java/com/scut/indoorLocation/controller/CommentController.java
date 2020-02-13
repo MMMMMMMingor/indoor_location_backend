@@ -2,9 +2,11 @@ package com.scut.indoorLocation.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.CommentRequest;
+import com.scut.indoorLocation.dto.GetAverageCommentPointRequest;
 import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.entity.Comment;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.GetAverageCommentPointErrorException;
 import com.scut.indoorLocation.service.CommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,4 +52,20 @@ public class CommentController {
         return ResponseEntity.ok(commentsPage);
     }
 
+    /**
+     * create by YellowBroke on 2020/2/13 22:54
+     * @param getAverageCommentPointRequest
+     * @return
+     */
+    @ApiOperation("查询店铺平均评论评分")
+    @RequestMapping(value = "/getAverageCommentPoint", method = RequestMethod.GET)
+    public double getAverageCommentPoint(@RequestBody GetAverageCommentPointRequest getAverageCommentPointRequest) {
+        try {
+            double averagePoint = commentService.getAverageCommentPoint(getAverageCommentPointRequest);
+            return averagePoint;
+        } catch (GetAverageCommentPointErrorException e) {
+            log.error("{}", e.getMessage());
+            return 0;
+        }
+    }
 }
