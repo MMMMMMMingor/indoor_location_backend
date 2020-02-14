@@ -39,9 +39,9 @@ public interface MenuService  {
     /**
      * Add by hxy 2020/ 01 /10
      * 删除某项菜单
-     * @param MenuId 菜单项的id
+     * @param menuId 菜单项的id
      * */
-    void deleteMenuItem(String MenuId) throws NotStoreOwnerException, NotExistException;
+    void deleteMenuItem(String menuId) throws NotStoreOwnerException, NotExistException;
 
 
 

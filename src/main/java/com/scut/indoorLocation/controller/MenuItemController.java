@@ -75,10 +75,10 @@ public class MenuItemController {
      */
 
     @ApiOperation("删除菜单项")
-    @RequestMapping(value = "/delete/{MenuId}", method = RequestMethod.POST)
-    public ResponseEntity<SuccessResponse> deleteMenuItem(@ApiParam (value="MenuID")@PathVariable String MenuId) {
+    @RequestMapping(value = "/delete/{menuId}", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse> deleteMenuItem(@ApiParam (value="menuId")@PathVariable String menuId) {
         try {
-            menuService.deleteMenuItem(MenuId);
+            menuService.deleteMenuItem(menuId);
             return ResponseEntity.ok(new SuccessResponse(true, "菜单项删除成功"));
         } catch (NotStoreOwnerException e) {
             log.error("菜单项删除异常{}", e.getMessage());

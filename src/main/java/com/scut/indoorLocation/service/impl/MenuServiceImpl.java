@@ -26,7 +26,7 @@ public class MenuServiceImpl implements MenuService {
     private MenuItemMapper menuItemMapper;
 
     /**
-     *Add by hxy 2020/2/11
+     * Add by hxy 2020/2/11
      */
     @Resource
     private JwtUtil jwtUtil;
@@ -62,58 +62,59 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * Add by hxy 2020/02/11
-     *修改菜单
+     * 修改菜单
      */
     @Override
     public void modifyMenuInfo(MenuItemRequest menuItemRequest) throws NotStoreOwnerException, NotExistException {
 
-        if(menuItemMapper.selectById(menuItemRequest.getMenuId())==null)
-            throw new NotExistException("不存在该菜单项");
         //提取uid
-        String uid =jwtUtil.extractUidSubject(this.request);
-        MenuItem menuItem=menuItemMapper.selectById(menuItemRequest.getMenuId()); //以传入的menuid为唯一标准
+        String uid = jwtUtil.extractUidSubject(this.request);
+
+        MenuItem menuItem = menuItemMapper.selectById(menuItemRequest.getMenuId()); //以传入的menuId为唯一标准
+
+        if (menuItem == null)
+            throw new NotExistException("不存在该菜单项");
+
+
         Store store = storeMapper.selectById(menuItem.getStoreId());
-        if(!store.getOwnerId().equals(uid))
+        if (!store.getOwnerId().equals(uid))
             throw new NotStoreOwnerException("该用户不是店铺的所有人");
 
 
         MenuItem newMenuItem = MenuItem.builder()
                 .menuId(menuItemRequest.getMenuId())
                 .storeId(menuItem.getStoreId())
-                .itemName(menuItemRequest.getItemName()==null?menuItem.getItemName():menuItemRequest.getItemName())
-                .introduction(menuItemRequest.getIntroduction()==null?menuItem.getIntroduction():menuItemRequest.getIntroduction())
-                .price(menuItemRequest.getPrice()==null?menuItem.getPrice():menuItemRequest.getPrice())
-                .imageUrl(menuItemRequest.getImageUrl()==null?menuItem.getImageUrl():menuItemRequest.getImageUrl())
+                .itemName(menuItemRequest.getItemName() == null ? menuItem.getItemName() : menuItemRequest.getItemName())
+                .introduction(menuItemRequest.getIntroduction() == null ? menuItem.getIntroduction() : menuItemRequest.getIntroduction())
+                .price(menuItemRequest.getPrice() == null ? menuItem.getPrice() : menuItemRequest.getPrice())
+                .imageUrl(menuItemRequest.getImageUrl() == null ? menuItem.getImageUrl() : menuItemRequest.getImageUrl())
                 .build();
 
-      menuItemMapper.updateById(newMenuItem);
+        menuItemMapper.updateById(newMenuItem);
     }
 
     /**
      * Add by hxy 2020/01/10
      * 删除一个菜单项
-     * */
+     */
 
     @Override
-    public void deleteMenuItem(String MenuId) throws NotExistException, NotStoreOwnerException {
+    public void deleteMenuItem(String menuId) throws NotExistException, NotStoreOwnerException {
 
-        if(menuItemMapper.selectById(MenuId)==null)
+        if (menuItemMapper.selectById(menuId) == null)
             throw new NotExistException("不存在该菜单项");
 
-        MenuItem menuitem= menuItemMapper.selectById(MenuId);   //通过当前的菜单id获得菜单项
+        MenuItem menuitem = menuItemMapper.selectById(menuId);   //通过当前的菜单id获得菜单项
         String uid = jwtUtil.extractUidSubject(this.request);  //获得当前的用户id
 
         Store store = storeMapper.selectById(menuitem.getStoreId());  //根据菜单项获得店铺id，即赋值一个店铺
 
-        if(!store.getOwnerId().equals(uid))
+        if (!store.getOwnerId().equals(uid))
             throw new NotStoreOwnerException("该用户不是菜单项所属店铺的用户，无法删除");
 
-        menuItemMapper.deleteById(MenuId);
+        menuItemMapper.deleteById(menuId);
 
     }
-
-
-
 
 
 }
