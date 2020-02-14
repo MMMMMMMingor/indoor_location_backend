@@ -50,12 +50,13 @@ public class CollectionController {
     @ApiOperation("分页查询收藏记录")
     @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
     public ResponseEntity<IPage<Collection>> queryCollection(@ApiParam(value = "页号") @PathVariable Long pageNo,
-                                                             @ApiParam(value = "也大小") @PathVariable Long pageSize) {
+                                                             @ApiParam(value = "页大小") @PathVariable Long pageSize) {
         // 分页查询
         IPage<Collection> page = collectionService.queryByPage(pageNo, pageSize);
 
         return ResponseEntity.ok(page);
     }
+
     @ApiOperation("删除收藏记录")
     @RequestMapping(value = "/delete/{collectionId}", method = RequestMethod.POST)
     public ResponseEntity<SuccessResponse> deleteCollection(@ApiParam(value = "收藏ID") @PathVariable String collectionId) {

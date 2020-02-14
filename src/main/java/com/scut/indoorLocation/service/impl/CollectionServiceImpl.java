@@ -61,20 +61,21 @@ public class CollectionServiceImpl extends ServiceImpl<CollectionMapper, Collect
         return collectionMapper.selectPage(page, wrapper);
 
     }
+
     @Override
     public void deleteCollection(String collectionId) throws DeleteException {
         //获取用户ID
         String uid = jwtUtil.extractUidSubject(request);
 
-        Collection collection = Collection.builder()
-                .userId(uid)
-                .collectionId(collectionId)
-                .createTime(LocalDateTime.now())
-                .build();
+        Collection collection = collectionMapper.selectById(collectionId);
 
-        //保存
+        //鉴权
+        if(!collection.getUserId().equals(uid))
+            throw new DeleteException("没有删除权限");
+
+        //删除
         if (collectionMapper.deleteById(collection.getCollectionId()) != 1)
-            throw new DeleteException("收藏信息创建异常");
+            throw new DeleteException("删除信息时发生异常");
     }
 
 }
