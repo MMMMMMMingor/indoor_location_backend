@@ -5,6 +5,7 @@ import com.scut.indoorLocation.dto.CommentRequest;
 import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.entity.Comment;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.GetAverageCommentPointErrorException;
 import com.scut.indoorLocation.service.CommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,4 +51,15 @@ public class CommentController {
         return ResponseEntity.ok(commentsPage);
     }
 
+
+    @ApiOperation("查询店铺平均评论评分")
+    @RequestMapping(value = "/average/{storeId}", method = RequestMethod.GET)
+    public double getAverageCommentPoint(@ApiParam(value = "店铺ID") @PathVariable String storeId) {
+        try {
+            return commentService.getAverageCommentPoint(storeId);
+        } catch (GetAverageCommentPointErrorException e) {
+            log.error("{}", e.getMessage());
+            return 0;
+        }
+    }
 }
