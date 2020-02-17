@@ -47,7 +47,7 @@ CREATE TABLE location.menu_item(
     item_name VARCHAR(15) NOT NULL DEFAULT '' COMMENT '菜单名称',
     introduction VARCHAR(50) NOT NULL DEFAULT '' COMMENT '简介',
     price INT(5) NOT NULL DEFAULT 1 COMMENT '价格',
-    image_url VARCHAR(50) NOT NULL DEFAULT '' COMMENT '图片地址',
+    image_url VARCHAR(100) NOT NULL DEFAULT '' COMMENT '图片地址',
     PRIMARY KEY (menu_id),
     INDEX idx_store_id (store_id),
     FOREIGN KEY (store_id) REFERENCES store (store_id) ON DELETE CASCADE

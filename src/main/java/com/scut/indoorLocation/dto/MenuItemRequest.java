@@ -31,6 +31,6 @@ public class MenuItemRequest {
     /**
      * Add by hxy 2020/02/11
      */
-    @ApiModelProperty(value = "菜单ID", name = "MenuId", example = "53c25fe9d88b27e0c5d10dc418068e09")
-    private String MenuId;
+    @ApiModelProperty(value = "菜单ID", name = "menuId", example = "53c25fe9d88b27e0c5d10dc418068e09")
+    private String menuId;
 }
