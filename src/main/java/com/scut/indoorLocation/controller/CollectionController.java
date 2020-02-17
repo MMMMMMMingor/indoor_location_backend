@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.entity.Collection;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.DeleteException;
 import com.scut.indoorLocation.service.CollectionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,11 +50,26 @@ public class CollectionController {
     @ApiOperation("分页查询收藏记录")
     @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
     public ResponseEntity<IPage<Collection>> queryCollection(@ApiParam(value = "页号") @PathVariable Long pageNo,
-                                                             @ApiParam(value = "也大小") @PathVariable Long pageSize) {
+                                                             @ApiParam(value = "页大小") @PathVariable Long pageSize) {
         // 分页查询
         IPage<Collection> page = collectionService.queryByPage(pageNo, pageSize);
 
         return ResponseEntity.ok(page);
+    }
+
+    @ApiOperation("删除收藏记录")
+    @RequestMapping(value = "/delete/{collectionId}", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse> deleteCollection(@ApiParam(value = "收藏ID") @PathVariable String collectionId) {
+
+        //删除一个collection记录
+        try {
+            collectionService.deleteCollection(collectionId);
+            return ResponseEntity.ok(new SuccessResponse(true, "删除成功"));
+        } catch (DeleteException e) {
+            log.error("{}", e.getMessage());
+            return ResponseEntity.ok(new SuccessResponse(true, "删除失败"));
+        }
+
     }
 
 }
