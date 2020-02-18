@@ -108,6 +108,14 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!-- 华南理工大学-定位算法-->
+        <dependency>
+            <groupId>com.scut</groupId>
+            <artifactId>knn_algorithm</artifactId>
+            <version>0.4</version>
+        </dependency>
+
+
         <!-- swagger -->
         <dependency>
             <groupId>io.springfox</groupId>

@@ -27,7 +27,7 @@ class MailServiceTest {
 
     @Test
     void sendMail() {
-        mailService.sendMail("947462457@qq.com", "邮件验证码");
+        mailService.sendMail("947462457@qq.com", "测试邮件发送功能");
 
         log.info(levelDBUtil.get("947462457@qq.com", String.class));
     }

@@ -90,3 +90,41 @@ CREATE TABLE location.friends(
     FOREIGN KEY (user_id) REFERENCES user_basic (user_id) ON DELETE CASCADE,
     FOREIGN KEY (friend_id) REFERENCES user_basic (user_id) ON DELETE CASCADE
 )ENGINE = InnoDB;
+
+
+# AP信息
+CREATE TABLE location.access_point(
+    bssid VARCHAR(17) NOT NULL COMMENT '主键ID, mac地址',
+    ssid VARCHAR(32) NOT NULL COMMENT 'WiFi别名',
+    x DOUBLE(10, 3) NOT NULL COMMENT 'x坐标',
+    y DOUBLE(10, 3) NOT NULL COMMENT 'y坐标',
+    PRIMARY KEY (bssid)
+)ENGINE = InnoDB;
+
+# 2D指纹库描述信息
+CREATE TABLE location.fingerprint_metadata_2d(
+    meta_id VARCHAR(32) NOT NULL COMMENT '主键ID',
+    user_id VARCHAR(32) NOT NULL COMMENT '用户ID',
+    bssid1 VARCHAR(17) NOT NULL COMMENT 'AP1 mac',
+    bssid2 VARCHAR(17) NOT NULL COMMENT 'AP2 mac',
+    bssid3 VARCHAR(17) NOT NULL COMMENT 'AP3 mac',
+    PRIMARY KEY (meta_id),
+    FOREIGN KEY (user_id) REFERENCES user_basic (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (bssid1) REFERENCES access_point (bssid) ON DELETE CASCADE,
+    FOREIGN KEY (bssid2) REFERENCES access_point (bssid) ON DELETE CASCADE,
+    FOREIGN KEY (bssid3) REFERENCES access_point (bssid) ON DELETE CASCADE
+)ENGINE = InnoDB;
+
+
+# 2D指纹库描述信息
+CREATE TABLE location.fingerprint_2d(
+    id VARCHAR(32) NOT NULL COMMENT '主键ID',
+    metadata_id VARCHAR(32) NOT NULL COMMENT '元数据',
+    x DOUBLE(10, 3) NOT NULL COMMENT 'x坐标',
+    y DOUBLE(10, 3) NOT NULL COMMENT 'y坐标',
+    ap1 INT(10) NOT NULL COMMENT 'AP1 强度',
+    ap2 INT(10) NOT NULL COMMENT 'AP2 强度',
+    ap3 INT(10) NOT NULL COMMENT 'AP3 强度',
+    PRIMARY KEY (id),
+    FOREIGN KEY (metadata_id) REFERENCES fingerprint_metadata_2d (meta_id) ON DELETE CASCADE
+)ENGINE = InnoDB;

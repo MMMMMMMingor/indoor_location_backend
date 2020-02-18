@@ -51,7 +51,7 @@ public class LevelDBUtil {
         }
     }
 
-    //基于fastjson的对象序列化
+    //基于fast json的对象序列化
     private byte[] serializer(Object obj) {
         return JSON.toJSONBytes(obj, SerializerFeature.DisableCircularReferenceDetect);
     }
