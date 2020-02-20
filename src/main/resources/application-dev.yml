@@ -45,6 +45,10 @@ levelDB:
   dir:
     path: "./levelDB"
 
+#mqtt服务器配置
+mqtt:
+  host: "39.99.131.85"
+  port: 1883
 
 #图片地址
 image:

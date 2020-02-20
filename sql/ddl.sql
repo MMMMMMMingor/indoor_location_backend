@@ -99,7 +99,6 @@ CREATE TABLE location.access_point(
     ssid VARCHAR(32) NOT NULL COMMENT 'WiFi别名',
     x DOUBLE(10, 3) NOT NULL COMMENT 'x坐标',
     y DOUBLE(10, 3) NOT NULL COMMENT 'y坐标',
-    create_time DATETIME NOT NULL COMMENT '创建时间',
     PRIMARY KEY (id),
     INDEX (bssid)
 

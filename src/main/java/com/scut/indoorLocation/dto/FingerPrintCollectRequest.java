@@ -5,14 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by Mingor on 2020/2/19 13:14
+ * Created by Mingor on 2020/2/20 16:05
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class FingerPrintRequest {
+@NoArgsConstructor
+public class FingerPrintCollectRequest {
 
-    private String metadataId;
+    private Double x;
+
+    private Double y;
 
     private Integer ap1;
 
@@ -20,4 +22,5 @@ public class FingerPrintRequest {
 
     private Integer ap3;
 
+    private Boolean finish;
 }

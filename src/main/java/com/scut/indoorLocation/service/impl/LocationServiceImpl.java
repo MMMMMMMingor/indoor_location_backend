@@ -4,11 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.scut.indoorLocation.dto.FingerPrintMetadataRequest;
-import com.scut.indoorLocation.dto.FingerPrintRequest;
+import com.scut.indoorLocation.dto.LocationServiceTopicResponse;
 import com.scut.indoorLocation.entity.AccessPoint;
 import com.scut.indoorLocation.entity.FingerPrint2D;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
 import com.scut.indoorLocation.exception.FingerPrintEmptyException;
 import com.scut.indoorLocation.mapper.AccessPointMapper;
 import com.scut.indoorLocation.mapper.FingerPrint2DMapper;
@@ -16,7 +17,8 @@ import com.scut.indoorLocation.mapper.FingerPrintMetadata2DMapper;
 import com.scut.indoorLocation.service.LocationService;
 import com.scut.indoorLocation.utility.JwtUtil;
 import com.scut.indoorLocation.utility.LocationAlgorithmUtil;
-import com.scut.point.Vector2D;
+import com.scut.indoorLocation.utility.UUIDUtil;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import java.util.List;
 /**
  * Created by Mingor on 2020/2/17 20:35
  */
+@Service
 public class LocationServiceImpl implements LocationService {
 
     @Resource
@@ -33,6 +36,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Resource
     private JwtUtil jwtUtil;
+
+    @Resource
+    private UUIDUtil uuidUtil;
 
     @Resource
     private LocationAlgorithmUtil locationAlgorithmUtil;
@@ -46,10 +52,22 @@ public class LocationServiceImpl implements LocationService {
     @Resource
     private AccessPointMapper accessPointMapper;
 
-
     @Override
-    public void saveFingerPrint(FingerPrint2D fingerPrint) {
-        fingerPrint2DMapper.insert(fingerPrint);
+    public String collectFingerPrint(String metadataId) throws FingerPrintAuthorizationException {
+
+        // 获取当前用户的ID
+        String uid = jwtUtil.extractUidSubject(request);
+
+        FingerPrintMetadata2D fingerPrintMetadata2D = fingerPrintMetadata2DMapper.selectById(metadataId);
+
+        if (!fingerPrintMetadata2D.getUserId().equals(uid))
+            throw new FingerPrintAuthorizationException("该用户没有权限操作本指纹库信息");
+
+        String tmpTopic =  uuidUtil.get32LengthString();
+
+        locationAlgorithmUtil.collectFingerPrint(tmpTopic, metadataId);
+
+        return tmpTopic;
     }
 
     @Override
@@ -99,19 +117,19 @@ public class LocationServiceImpl implements LocationService {
 
 
     @Override
-    public Vector2D getPosition2D(FingerPrintRequest request) throws FingerPrintEmptyException {
-
-        String metadataId = request.getMetadataId();
+    public LocationServiceTopicResponse getPosition2D(String metadataId) throws FingerPrintEmptyException {
 
         QueryWrapper<FingerPrint2D> wrapper = new QueryWrapper<FingerPrint2D>().eq("metadata_id", metadataId);
         List<FingerPrint2D> fingerPrint2DHistory = fingerPrint2DMapper.selectList(wrapper);
 
-        FingerPrint2D fingerPrint2D = FingerPrint2D.builder()
-                .ap1(request.getAp1())
-                .ap2(request.getAp2())
-                .ap3(request.getAp3())
-                .build();
+        if(fingerPrint2DHistory == null || fingerPrint2DHistory.size() == 0)
+            throw new FingerPrintEmptyException("没有指纹库信息");
 
-        return locationAlgorithmUtil.calculatePosition2D(fingerPrint2DHistory, fingerPrint2D);
+        String sendTopic = uuidUtil.get32LengthString();
+        String receiveTopic = uuidUtil.get32LengthString();
+
+        locationAlgorithmUtil.calculatePosition2D(fingerPrint2DHistory, sendTopic, receiveTopic);
+
+        return new LocationServiceTopicResponse(true, sendTopic, receiveTopic, "请求成功");
     }
 }

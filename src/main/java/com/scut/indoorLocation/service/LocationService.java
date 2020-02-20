@@ -2,12 +2,11 @@ package com.scut.indoorLocation.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.FingerPrintMetadataRequest;
-import com.scut.indoorLocation.dto.FingerPrintRequest;
-import com.scut.indoorLocation.entity.FingerPrint2D;
+import com.scut.indoorLocation.dto.LocationServiceTopicResponse;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
+import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
 import com.scut.indoorLocation.exception.FingerPrintEmptyException;
-import com.scut.point.Vector2D;
 
 
 /**
@@ -16,11 +15,10 @@ import com.scut.point.Vector2D;
 public interface LocationService {
 
     /**
-     * 保存指纹信息
-     *
-     * @param fingerPrint 指纹信息
+     * 申请采集指纹信息
+     * @param metadataId 指纹库元数据ID
      */
-    void saveFingerPrint(FingerPrint2D fingerPrint);
+    String collectFingerPrint(String metadataId) throws FingerPrintAuthorizationException;
 
     /**
      * 创建指纹库元数据
@@ -39,9 +37,10 @@ public interface LocationService {
     /**
      * 计算用户的2D坐标
      *
-     * @param request 当前指纹信息
-     * @return 2D坐标
+     * @param metadataId 当前指纹元数据
+     * @return mqtt topic
      */
-    Vector2D getPosition2D(FingerPrintRequest request) throws FingerPrintEmptyException;
+    LocationServiceTopicResponse getPosition2D(String metadataId) throws FingerPrintEmptyException;
+
 
 }

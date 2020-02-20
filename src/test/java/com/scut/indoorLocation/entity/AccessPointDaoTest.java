@@ -3,7 +3,6 @@ package com.scut.indoorLocation.entity;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.scut.indoorLocation.mapper.AccessPointMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-@Ignore
 public class AccessPointDaoTest {
 
     @Resource
@@ -35,7 +32,6 @@ public class AccessPointDaoTest {
                 .ssid("wifi名字")
                 .x(10.0)
                 .y(10.0)
-                .createTime(LocalDateTime.now())
                 .build();
 
         accessPointMapper.insert(accessPoint);

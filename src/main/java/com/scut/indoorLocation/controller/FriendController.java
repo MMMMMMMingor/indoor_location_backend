@@ -40,19 +40,19 @@ public class FriendController {
             return ResponseEntity.ok(new SuccessResponse(true, "添加成功"));
         } catch (CreateException e) {
             log.error("{}", e.getMessage());
-            return ResponseEntity.ok(new SuccessResponse(true, "添加失败"));
+            return ResponseEntity.ok(new SuccessResponse(true, e.getMessage()));
         }
 
     }
 
-
     @ApiOperation("分页查询好友信息")
     @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
     public ResponseEntity<IPage<Friend>> queryCollection(@ApiParam(value = "页号") @PathVariable Long pageNo,
-                                                             @ApiParam(value = "也大小") @PathVariable Long pageSize) {
+                                                             @ApiParam(value = "页大小") @PathVariable Long pageSize) {
         // 分页查询
         IPage<Friend> page = friendService.queryByPage(pageNo, pageSize);
 
         return ResponseEntity.ok(page);
     }
+
 }

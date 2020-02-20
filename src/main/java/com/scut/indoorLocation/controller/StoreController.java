@@ -44,7 +44,7 @@ public class StoreController {
     @ApiOperation("分页方式查询店铺")
     @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
     public ResponseEntity<IPage<Store>> queryStorePaging(@ApiParam(value = "页号") @PathVariable Long pageNo,
-                                                         @ApiParam(value = "也大小") @PathVariable Long pageSize) {
+                                                         @ApiParam(value = "页大小") @PathVariable Long pageSize) {
 //        try {
         IPage<Store> storesPage = storeService.queryStoresByPage(pageNo, pageSize);
         return ResponseEntity.ok(storesPage);
