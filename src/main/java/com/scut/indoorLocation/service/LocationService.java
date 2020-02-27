@@ -7,6 +7,7 @@ import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
 import com.scut.indoorLocation.exception.FingerPrintEmptyException;
+import com.scut.indoorLocation.exception.NotOwnerException;
 
 
 /**
@@ -25,6 +26,12 @@ public interface LocationService {
      * @param request 3个AP数据
      */
     void createFingerPrintMetadata(FingerPrintMetadataRequest request) throws FingerPrintEmptyException, CreateException;
+
+    /**
+     * 删除指纹库元数据
+     * @param metadataId 指纹库元数据ID
+     */
+    void deleteFingerPrintMetadata(String metadataId) throws NotOwnerException;
 
     /**
      * 分页查询指纹库元数据

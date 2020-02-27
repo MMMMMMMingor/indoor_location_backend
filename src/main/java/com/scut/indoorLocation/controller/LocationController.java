@@ -9,6 +9,7 @@ import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
 import com.scut.indoorLocation.exception.FingerPrintEmptyException;
+import com.scut.indoorLocation.exception.NotOwnerException;
 import com.scut.indoorLocation.service.LocationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +38,7 @@ public class LocationController {
 
         try {
             locationService.createFingerPrintMetadata(metadataRequest);
-            return ResponseEntity.ok(new SuccessResponse(true, "请求成功"));
+            return ResponseEntity.ok(new SuccessResponse(true, "创建成功"));
 
         } catch (FingerPrintEmptyException e) {
             log.error("{}", e.getMessage());
@@ -50,6 +51,20 @@ public class LocationController {
 
     }
 
+    @ApiOperation("申请定位服务")
+    @RequestMapping(value = "/{metadataId}", method = RequestMethod.DELETE)
+    public ResponseEntity<SuccessResponse> deleteFingerPrintMetadata(@ApiParam(value = "metadataId") @PathVariable String metadataId) {
+
+        try {
+            locationService.deleteFingerPrintMetadata(metadataId);
+            return ResponseEntity.ok(new SuccessResponse(true, "删除成功"));
+
+        } catch (NotOwnerException e) {
+            log.error("{}", e.getMessage());
+            return ResponseEntity.ok(new SuccessResponse(false, e.getMessage()));
+        }
+
+    }
 
     @ApiOperation("分页查询历史指纹库元信息")
     @RequestMapping(value = "/query/{pageNo}/{pageSize}", method = RequestMethod.GET)
@@ -81,11 +96,11 @@ public class LocationController {
 
         try {
             String tmpCode = locationService.collectFingerPrint(metadataId);
-            return ResponseEntity.ok(new CollectTopicResponse(true, tmpCode,"请求成功"));
+            return ResponseEntity.ok(new CollectTopicResponse(true, tmpCode, "请求成功"));
 
         } catch (FingerPrintAuthorizationException e) {
             log.error(e.getMessage());
-            return ResponseEntity.ok(new CollectTopicResponse(false, null,e.getMessage()));
+            return ResponseEntity.ok(new CollectTopicResponse(false, null, e.getMessage()));
         }
 
     }

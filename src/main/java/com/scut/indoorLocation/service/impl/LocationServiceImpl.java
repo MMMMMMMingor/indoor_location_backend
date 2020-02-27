@@ -11,6 +11,7 @@ import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
 import com.scut.indoorLocation.exception.FingerPrintEmptyException;
+import com.scut.indoorLocation.exception.NotOwnerException;
 import com.scut.indoorLocation.mapper.AccessPointMapper;
 import com.scut.indoorLocation.mapper.FingerPrint2DMapper;
 import com.scut.indoorLocation.mapper.FingerPrintMetadata2DMapper;
@@ -101,6 +102,19 @@ public class LocationServiceImpl implements LocationService {
 
         fingerPrintMetadata2DMapper.insert(metadata2D);
 
+    }
+
+    @Override
+    public void deleteFingerPrintMetadata(String metadataId) throws NotOwnerException {
+        // 获取当前用户的ID
+        String uid = jwtUtil.extractUidSubject(request);
+
+        FingerPrintMetadata2D fingerPrintMetadata2D = fingerPrintMetadata2DMapper.selectById(metadataId);
+
+        if(!uid.equals(fingerPrintMetadata2D.getUserId()))
+            throw new NotOwnerException("权限错误");
+
+        fingerPrintMetadata2DMapper.deleteById(metadataId);
     }
 
 
