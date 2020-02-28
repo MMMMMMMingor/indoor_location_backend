@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 
 /**
  * Created by Mingor on 2020/2/17 20:47
@@ -19,9 +18,10 @@ import java.time.LocalDateTime;
 public class AccessPoint {
 
     @JsonIgnore
-    @TableId(value = "id", type = IdType.ASSIGN_UUID)
-    private String id;
+    @TableId(value = "meta_id")
+    private String metaId;
 
+    @TableId(value = "bssid")
     @ApiModelProperty(value = "bssid（mac地址）", name = "bssid", example = "00-01-6C-06-A6-29")
     private String bssid;
 

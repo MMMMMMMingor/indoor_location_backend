@@ -41,7 +41,7 @@ public class AccessPointDaoTest {
 
         List<AccessPoint> accessPoints = accessPointMapper.selectList(wrapper);
         AccessPoint accessPoint1 = accessPoints.get(0);
-        assertEquals(accessPoint.getId(), accessPoint1.getId());
+        assertEquals(accessPoint.getBssid(), accessPoint1.getBssid());
     }
 
 

@@ -94,12 +94,12 @@ CREATE TABLE location.friends(
 
 # AP信息
 CREATE TABLE location.access_point(
-    id VARCHAR(32) NOT NULL COMMENT '主键ID',
+    meta_id VARCHAR(32) NOT NULL COMMENT 'metaID',
     bssid VARCHAR(17) NOT NULL COMMENT 'mac地址',
     ssid VARCHAR(32) NOT NULL COMMENT 'WiFi别名',
     x DOUBLE(10, 3) NOT NULL COMMENT 'x坐标',
     y DOUBLE(10, 3) NOT NULL COMMENT 'y坐标',
-    PRIMARY KEY (id),
+    PRIMARY KEY (meta_id, bssid),
     INDEX (bssid)
 
 )ENGINE = InnoDB;

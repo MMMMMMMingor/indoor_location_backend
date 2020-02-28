@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @TableName("fingerprint_metadata_2d")
 public class FingerPrintMetadata2D {
-    @TableId(value = "meta_id", type = IdType.ASSIGN_UUID)
+    @TableId(value = "meta_id")
     private String metaId;
 
     private String userId;

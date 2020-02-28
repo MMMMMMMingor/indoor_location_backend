@@ -1,6 +1,7 @@
 package com.scut.indoorLocation.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.scut.indoorLocation.dto.FingerPrintMetaDetailResponse;
 import com.scut.indoorLocation.dto.FingerPrintMetadataRequest;
 import com.scut.indoorLocation.dto.LocationServiceTopicResponse;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
@@ -32,6 +33,13 @@ public interface LocationService {
      * @param metadataId 指纹库元数据ID
      */
     void deleteFingerPrintMetadata(String metadataId) throws NotOwnerException;
+
+    /**
+     * 查询 metadata 详细信息
+     * @param metadataId 指纹库元数据ID
+     * @return 详细信息
+     */
+    FingerPrintMetaDetailResponse queryMetaById(String metadataId);
 
     /**
      * 分页查询指纹库元数据

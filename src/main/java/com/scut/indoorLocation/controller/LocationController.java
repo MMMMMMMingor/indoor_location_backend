@@ -1,10 +1,7 @@
 package com.scut.indoorLocation.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.scut.indoorLocation.dto.FingerPrintMetadataRequest;
-import com.scut.indoorLocation.dto.LocationServiceTopicResponse;
-import com.scut.indoorLocation.dto.SuccessResponse;
-import com.scut.indoorLocation.dto.CollectTopicResponse;
+import com.scut.indoorLocation.dto.*;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
@@ -32,7 +29,7 @@ public class LocationController {
     @Resource
     private LocationService locationService;
 
-    @ApiOperation("申请定位服务")
+    @ApiOperation("创建指纹库")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<SuccessResponse> createFingerPrintMetadata(@RequestBody FingerPrintMetadataRequest metadataRequest) {
 
@@ -51,7 +48,16 @@ public class LocationController {
 
     }
 
-    @ApiOperation("申请定位服务")
+    @ApiOperation("查询指纹库详细信息")
+    @RequestMapping(value = "/meta/detail/{metadataId}", method = RequestMethod.GET)
+    public ResponseEntity<FingerPrintMetaDetailResponse> queryFingerPrintMetadata(@ApiParam(value = "metadataId") @PathVariable String metadataId) {
+
+        FingerPrintMetaDetailResponse response = locationService.queryMetaById(metadataId);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @ApiOperation("删除指纹库记录")
     @RequestMapping(value = "/{metadataId}", method = RequestMethod.DELETE)
     public ResponseEntity<SuccessResponse> deleteFingerPrintMetadata(@ApiParam(value = "metadataId") @PathVariable String metadataId) {
 
@@ -76,7 +82,7 @@ public class LocationController {
         return ResponseEntity.ok(data);
     }
 
-    @ApiOperation("申请使用定位服务，申请成功后，通过mqtt服务器向服务器发送定位请求, mqtt topic: \n 用户ID（客户端 --> 服务端）\n metadataId 指纹库元数据（服务端 --> 客户端）")
+    @ApiOperation("申请使用定位服务，申请成功后，通过mqtt服务器向服务器发送定位请求, mqtt topic: \n sendTopic（客户端 --> 服务端）\n receiveTopic 指纹库元数据（服务端 --> 客户端）")
     @RequestMapping(value = "/service/{metadataId}", method = RequestMethod.POST)
     public ResponseEntity<LocationServiceTopicResponse> queryCollection(@ApiParam(value = "指纹库元数据ID") @PathVariable String metadataId) {
 
