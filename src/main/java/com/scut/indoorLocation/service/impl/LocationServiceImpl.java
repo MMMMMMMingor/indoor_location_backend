@@ -122,6 +122,11 @@ public class LocationServiceImpl implements LocationService {
             throw new NotOwnerException("权限错误");
 
         fingerPrintMetadata2DMapper.deleteById(metadataId);
+
+        QueryWrapper<AccessPoint> wrapper = new QueryWrapper<>();
+        wrapper.eq("meta_id", metadataId);
+        accessPointMapper.delete(wrapper);
+
     }
 
     @Override
