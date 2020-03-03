@@ -26,7 +26,7 @@ public interface LocationService {
      * 创建指纹库元数据
      * @param request 3个AP数据
      */
-    void createFingerPrintMetadata(FingerPrintMetadataRequest request) throws FingerPrintEmptyException, CreateException;
+    void createFingerPrintMetadata(FingerPrintMetadataRequest request) throws CreateException;
 
     /**
      * 删除指纹库元数据
@@ -39,7 +39,7 @@ public interface LocationService {
      * @param metadataId 指纹库元数据ID
      * @return 详细信息
      */
-    FingerPrintMetaDetailResponse queryMetaById(String metadataId);
+    FingerPrintMetaDetailResponse queryMetaById(String metadataId) throws NotOwnerException;
 
     /**
      * 分页查询指纹库元数据

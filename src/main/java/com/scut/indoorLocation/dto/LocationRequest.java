@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Created by Mingor on 2020/2/19 13:14
  */
@@ -14,31 +16,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LocationRequest implements IFingerPrint {
 
-    @ApiModelProperty(value = "ap1 信号强度", name = "ap1", example = "6")
-    private Integer intensity1;
+    @ApiModelProperty(value = "信号强度列表", name = "intensities", example = "[1,2,3,4,5]")
+    private List<Integer> intensities;
 
-    @ApiModelProperty(value = "ap2 信号强度", name = "ap2", example = "5")
-    private Integer intensity2;
-
-    @ApiModelProperty(value = "ap3 信号强度", name = "ap3", example = "10")
-    private Integer intensity3;
-
-    @ApiModelProperty(value = "结束标志", name = "finish", example = "false")
-    private Boolean finish;
+    @ApiModelProperty(value = "是否结束", name = "finish", example = "false")
+    private boolean finish;
 
     @Override
-    public int getAP1() {
-        return intensity1;
-    }
-
-    @Override
-    public int getAP2() {
-        return intensity2;
-    }
-
-    @Override
-    public int getAP3() {
-        return intensity3;
+    public int[] getAPS() {
+        return intensities.stream().mapToInt(value -> value).toArray();
     }
 
     @Override

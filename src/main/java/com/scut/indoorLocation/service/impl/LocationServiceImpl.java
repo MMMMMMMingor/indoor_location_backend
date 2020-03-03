@@ -7,17 +7,17 @@ import com.scut.indoorLocation.dto.FingerPrintMetaDetailResponse;
 import com.scut.indoorLocation.dto.FingerPrintMetadataRequest;
 import com.scut.indoorLocation.dto.LocationServiceTopicResponse;
 import com.scut.indoorLocation.entity.AccessPoint;
-import com.scut.indoorLocation.entity.FingerPrint2D;
+import com.scut.indoorLocation.dto.FingerPrint2D;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
 import com.scut.indoorLocation.exception.FingerPrintEmptyException;
 import com.scut.indoorLocation.exception.NotOwnerException;
 import com.scut.indoorLocation.mapper.AccessPointMapper;
-import com.scut.indoorLocation.mapper.FingerPrint2DMapper;
 import com.scut.indoorLocation.mapper.FingerPrintMetadata2DMapper;
 import com.scut.indoorLocation.service.LocationService;
 import com.scut.indoorLocation.utility.JwtUtil;
+import com.scut.indoorLocation.utility.LevelDBUtil;
 import com.scut.indoorLocation.utility.LocationAlgorithmUtil;
 import com.scut.indoorLocation.utility.UUIDUtil;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Mingor on 2020/2/17 20:35
@@ -43,13 +46,13 @@ public class LocationServiceImpl implements LocationService {
     private UUIDUtil uuidUtil;
 
     @Resource
+    private LevelDBUtil levelDBUtil;
+
+    @Resource
     private LocationAlgorithmUtil locationAlgorithmUtil;
 
     @Resource
     private FingerPrintMetadata2DMapper fingerPrintMetadata2DMapper;
-
-    @Resource
-    private FingerPrint2DMapper fingerPrint2DMapper;
 
     @Resource
     private AccessPointMapper accessPointMapper;
@@ -73,28 +76,17 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void createFingerPrintMetadata(FingerPrintMetadataRequest metadataRequest) throws FingerPrintEmptyException, CreateException {
+    public void createFingerPrintMetadata(FingerPrintMetadataRequest metadataRequest) throws CreateException {
+
+        if (metadataRequest.getAccessPoints() == null || metadataRequest.getAccessPoints().size() < 3)
+            throw new CreateException("AP数量不应该小于3个");
+
+        Set<String> set = metadataRequest.getAccessPoints().stream().map(AccessPoint::getBssid).collect(Collectors.toSet());
+
+        if (set.size() != metadataRequest.getAccessPoints().size())
+            throw new CreateException("AP存在重复");
 
         String metaId = uuidUtil.get32LengthString();
-
-        AccessPoint ap1 = metadataRequest.getAp1();
-        AccessPoint ap2 = metadataRequest.getAp2();
-        AccessPoint ap3 = metadataRequest.getAp3();
-
-        if (ap1 == null || ap2 == null || ap3 == null)
-            throw new FingerPrintEmptyException("数据不能有空");
-
-        if (ap1.getBssid().equals(ap2.getBssid()) || ap1.getBssid().equals(ap3.getBssid()) || ap2.getBssid().equals(ap3.getBssid()))
-            throw new CreateException("需要独立不同的3个AP");
-
-        ap1.setMetaId(metaId);
-        ap2.setMetaId(metaId);
-        ap3.setMetaId(metaId);
-
-        // 保存AP信息
-        accessPointMapper.insert(ap1);
-        accessPointMapper.insert(ap2);
-        accessPointMapper.insert(ap3);
 
         // 获取当前用户的ID
         String uid = jwtUtil.extractUidSubject(request);
@@ -102,13 +94,25 @@ public class LocationServiceImpl implements LocationService {
         FingerPrintMetadata2D metadata2D = FingerPrintMetadata2D.builder()
                 .metaId(metaId)
                 .userId(uid)
-                .bssid1(metadataRequest.getAp1().getBssid())
-                .bssid2(metadataRequest.getAp2().getBssid())
-                .bssid3(metadataRequest.getAp3().getBssid())
+                .remark(metadataRequest.getRemark())
+                .accessPoints(new ArrayList<>())
+                .fingerPrint2DList(new ArrayList<>())
                 .createTime(LocalDateTime.now())
                 .build();
 
+        // 插入MySQL数据库
         fingerPrintMetadata2DMapper.insert(metadata2D);
+
+        // 保存AP数据
+        for (AccessPoint ap : metadataRequest.getAccessPoints()) {
+            ap.setMetaId(metaId);
+            metadata2D.getAccessPoints().add(ap);
+            accessPointMapper.insert(ap);
+        }
+
+        // 插入levelDB数据库
+        levelDBUtil.put(metaId, metadata2D);
+
     }
 
     @Override
@@ -121,40 +125,28 @@ public class LocationServiceImpl implements LocationService {
         if (!uid.equals(fingerPrintMetadata2D.getUserId()))
             throw new NotOwnerException("权限错误");
 
+        // 从MySQL数据库中删除
         fingerPrintMetadata2DMapper.deleteById(metadataId);
 
-        QueryWrapper<AccessPoint> wrapper = new QueryWrapper<>();
-        wrapper.eq("meta_id", metadataId);
-        accessPointMapper.delete(wrapper);
-
+        // 从levelDB数据库中删除
+        levelDBUtil.delete(metadataId);
     }
 
+
     @Override
-    public FingerPrintMetaDetailResponse queryMetaById(String metadataId) {
+    public FingerPrintMetaDetailResponse queryMetaById(String metadataId) throws NotOwnerException {
+        // 获取当前用户的ID
+        String uid = jwtUtil.extractUidSubject(request);
 
-        FingerPrintMetadata2D metadata2D = fingerPrintMetadata2DMapper.selectById(metadataId);
+        FingerPrintMetadata2D f = levelDBUtil.get(metadataId, FingerPrintMetadata2D.class);
+        if (!uid.equals(f.getUserId()))
+            throw new NotOwnerException("权限错误");
 
-        QueryWrapper<AccessPoint> wrapper = new QueryWrapper<>();
-        wrapper.eq("meta_id", metadataId);
-        List<AccessPoint> accessPoints = accessPointMapper.selectList(wrapper);
-
-        FingerPrintMetaDetailResponse response = new FingerPrintMetaDetailResponse();
-
-        response.setMetadataId(metadataId);
-
-        for (AccessPoint ap : accessPoints) {
-            if (ap.getBssid().equals(metadata2D.getBssid1()))
-                response.setAp1(ap);
-
-            if (ap.getBssid().equals(metadata2D.getBssid2()))
-                response.setAp2(ap);
-
-            if (ap.getBssid().equals(metadata2D.getBssid3()))
-                response.setAp3(ap);
-        }
-
-
-        return response;
+        return FingerPrintMetaDetailResponse.builder()
+                .metadataId(metadataId)
+                .accessPoints(f.getAccessPoints())
+                .count(f.getFingerPrint2DList().size())
+                .build();
     }
 
 
@@ -166,17 +158,20 @@ public class LocationServiceImpl implements LocationService {
         Page<FingerPrintMetadata2D> page = new Page<>(pageNo, pageSize);
         QueryWrapper<FingerPrintMetadata2D> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", uid);
-        return fingerPrintMetadata2DMapper.selectPage(page, wrapper);
+        page = fingerPrintMetadata2DMapper.selectPage(page, wrapper);
+
+        return page;
     }
 
 
     @Override
     public LocationServiceTopicResponse getPosition2D(String metadataId) throws FingerPrintEmptyException {
 
-        QueryWrapper<FingerPrint2D> wrapper = new QueryWrapper<FingerPrint2D>().eq("metadata_id", metadataId);
-        List<FingerPrint2D> fingerPrint2DHistory = fingerPrint2DMapper.selectList(wrapper);
+        FingerPrintMetadata2D fingerPrintMetadata2D = levelDBUtil.get(metadataId, FingerPrintMetadata2D.class);
 
-        if (fingerPrint2DHistory == null || fingerPrint2DHistory.size() == 0)
+        List<FingerPrint2D> fingerPrint2DHistory = fingerPrintMetadata2D.getFingerPrint2DList();
+
+        if (fingerPrint2DHistory.size() == 0)
             throw new FingerPrintEmptyException("没有指纹库信息");
 
         String sendTopic = uuidUtil.get32LengthString();

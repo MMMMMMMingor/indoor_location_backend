@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.utility;
 
+import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.entity.UserBasic;
 import com.scut.indoorLocation.utility.LevelDBUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -71,4 +72,5 @@ public class LevelDBTest {
             log.info("delete : " + key);
         }
     }
+
 }

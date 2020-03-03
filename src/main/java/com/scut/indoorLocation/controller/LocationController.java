@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 /**
  * Created by Mingor on 2020/2/19 21:32
@@ -37,10 +38,6 @@ public class LocationController {
             locationService.createFingerPrintMetadata(metadataRequest);
             return ResponseEntity.ok(new SuccessResponse(true, "创建成功"));
 
-        } catch (FingerPrintEmptyException e) {
-            log.error("{}", e.getMessage());
-            return ResponseEntity.ok(new SuccessResponse(false, e.getMessage()));
-
         } catch (CreateException e) {
             log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, e.getMessage()));
@@ -52,8 +49,13 @@ public class LocationController {
     @RequestMapping(value = "/meta/detail/{metadataId}", method = RequestMethod.GET)
     public ResponseEntity<FingerPrintMetaDetailResponse> queryFingerPrintMetadata(@ApiParam(value = "metadataId") @PathVariable String metadataId) {
 
-        FingerPrintMetaDetailResponse response = locationService.queryMetaById(metadataId);
-        return ResponseEntity.ok(response);
+        try {
+            FingerPrintMetaDetailResponse response = locationService.queryMetaById(metadataId);
+            return ResponseEntity.ok(response);
+        } catch (NotOwnerException e) {
+            log.error("{}", e.getMessage());
+            return ResponseEntity.of(Optional.empty());
+        }
     }
 
 

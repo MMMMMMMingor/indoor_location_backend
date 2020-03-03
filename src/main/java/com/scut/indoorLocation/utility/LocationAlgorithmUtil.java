@@ -2,8 +2,8 @@ package com.scut.indoorLocation.utility;
 
 import com.scut.indoorLocation.dto.FingerPrintCollectRequest;
 import com.scut.indoorLocation.dto.LocationRequest;
-import com.scut.indoorLocation.entity.FingerPrint2D;
-import com.scut.indoorLocation.mapper.FingerPrint2DMapper;
+import com.scut.indoorLocation.dto.FingerPrint2D;
+import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.knn_algorithm.KnnAlgorithm;
 import com.scut.point.Vector2D;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class LocationAlgorithmUtil {
     private MqttClientUtil mqttClientUtil;
 
     @Resource
-    private FingerPrint2DMapper fingerPrint2DMapper;
+    private LevelDBUtil levelDBUtil;
 
     /**
      * 使用mqtt获取定位请求并处理定位请求
@@ -37,21 +37,23 @@ public class LocationAlgorithmUtil {
     @Async
     public void calculatePosition2D(List<FingerPrint2D> fingerPrintsLibrary, String sendTopic, String receiveTopic) {
 
-        LocationRequest request;
 
         while (true) {
             try {
-                request = mqttClientUtil.subscribe(sendTopic, LocationRequest.class, QoS.AT_MOST_ONCE);
-                if (request.getFinish())
+                LocationRequest request = mqttClientUtil.subscribe(sendTopic, LocationRequest.class, QoS.EXACTLY_ONCE);
+                if (request.isFinish())
                     return;
 
                 Vector2D result = KnnAlgorithm.knnAlgorithm(fingerPrintsLibrary, request, 7);
 
                 mqttClientUtil.publish(receiveTopic, result, QoS.AT_MOST_ONCE);
 
+                log.info("定位结果: {}", result.toString());
+
             } catch (Exception e) {
                 Thread.currentThread().interrupt();
                 log.error("mqtt订阅错误");
+                return;
             }
 
         }
@@ -67,27 +69,28 @@ public class LocationAlgorithmUtil {
     @Async
     public void collectFingerPrint(String tmpTopic, String metadataId){
 
-        FingerPrintCollectRequest request;
+        FingerPrintMetadata2D fingerPrintMetadata2D = levelDBUtil.get(metadataId, FingerPrintMetadata2D.class);
+        List<FingerPrint2D> list = fingerPrintMetadata2D.getFingerPrint2DList();
 
         while (true) {
             try {
-                request = mqttClientUtil.subscribe(tmpTopic, FingerPrintCollectRequest.class, QoS.EXACTLY_ONCE);
-                if (request.getFinish())
+                FingerPrintCollectRequest request = mqttClientUtil.subscribe(tmpTopic, FingerPrintCollectRequest.class, QoS.EXACTLY_ONCE);
+                if (request.getFinish()){
+                    levelDBUtil.put(metadataId, fingerPrintMetadata2D);
                     return;
+                }
 
                 FingerPrint2D fingerPrint2D = FingerPrint2D.builder()
                         .metadataId(metadataId)
                         .x(request.getX())
                         .y(request.getY())
-                        .ap1(request.getAp1())
-                        .ap2(request.getAp2())
-                        .ap3(request.getAp3())
+                        .intensities(request.getIntensities())
                         .createTime(LocalDateTime.now())
                         .build();
 
-                fingerPrint2DMapper.insert(fingerPrint2D);
+                list.add(fingerPrint2D);
 
-                log.info(fingerPrint2D.toString());
+                log.info("采集指纹: {}", fingerPrint2D.toString());
 
             } catch (Exception e) {
                 Thread.currentThread().interrupt();

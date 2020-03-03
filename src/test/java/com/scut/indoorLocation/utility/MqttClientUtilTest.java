@@ -42,7 +42,7 @@ class MqttClientUtilTest {
                 } catch (Exception e) {
                     log.error(e.toString());
                 }
-            } while (!locationRequest.getFinish());
+            } while (!locationRequest.isFinish());
         }).start();
 
         new Thread(() -> {
@@ -54,7 +54,7 @@ class MqttClientUtilTest {
                 } catch (Exception e) {
                     log.error(e.toString());
                 }
-            } while (!locationRequest.getFinish());
+            } while (!locationRequest.isFinish());
         }).start();
 
         try {

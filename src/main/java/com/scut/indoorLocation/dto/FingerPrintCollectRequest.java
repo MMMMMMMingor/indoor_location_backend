@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Created by Mingor on 2020/2/20 16:05
  */
@@ -16,11 +18,7 @@ public class FingerPrintCollectRequest {
 
     private Double y;
 
-    private Integer ap1;
-
-    private Integer ap2;
-
-    private Integer ap3;
+    private int[] intensities;
 
     private Boolean finish;
 }
