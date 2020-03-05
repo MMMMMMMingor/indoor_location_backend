@@ -69,6 +69,14 @@ public class MqttClientUtil {
     }
 
     /**
+     * 取消订阅topic
+     * @param topic 主题
+     */
+    public void unsubscribe(String topic) throws Exception {
+        this.connection.unsubscribe(new String[]{topic});
+    }
+
+    /**
      * Bean销毁触发函数
      */
     @PreDestroy

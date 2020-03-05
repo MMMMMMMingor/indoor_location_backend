@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -103,6 +104,13 @@ public class LocationServiceImpl implements LocationService {
         // 插入MySQL数据库
         fingerPrintMetadata2DMapper.insert(metadata2D);
 
+        // 按照bssid排序
+        metadataRequest.getAccessPoints().sort((a, b) -> {
+            String s1 = a.getBssid().replace("-", "");
+            String s2 = b.getBssid().replace("-", "");
+            return s1.compareTo(s2);
+        });
+
         // 保存AP数据
         for (AccessPoint ap : metadataRequest.getAccessPoints()) {
             ap.setMetaId(metaId);
@@ -145,7 +153,7 @@ public class LocationServiceImpl implements LocationService {
         return FingerPrintMetaDetailResponse.builder()
                 .metadataId(metadataId)
                 .accessPoints(f.getAccessPoints())
-                .count(f.getFingerPrint2DList().size())
+                .fingerPrintS(f.getFingerPrint2DList())
                 .build();
     }
 
@@ -158,7 +166,14 @@ public class LocationServiceImpl implements LocationService {
         Page<FingerPrintMetadata2D> page = new Page<>(pageNo, pageSize);
         QueryWrapper<FingerPrintMetadata2D> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", uid);
-        page = fingerPrintMetadata2DMapper.selectPage(page, wrapper);
+        fingerPrintMetadata2DMapper.selectPage(page, wrapper);
+
+        for (FingerPrintMetadata2D record : page.getRecords()) {
+            String metaId = record.getMetaId();
+            FingerPrintMetadata2D metadata2D = levelDBUtil.get(metaId, FingerPrintMetadata2D.class);
+            record.setAccessPoints(metadata2D.getAccessPoints());
+            record.setCount(metadata2D.getFingerPrint2DList().size());
+        }
 
         return page;
     }

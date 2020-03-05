@@ -30,7 +30,9 @@ public class FingerPrintMetadata2D {
 
     private String remark;
 
-    @JsonIgnore
+    @TableField(exist = false)
+    private Integer count;
+
     @TableField(exist = false)
     private List<AccessPoint> accessPoints;
 
