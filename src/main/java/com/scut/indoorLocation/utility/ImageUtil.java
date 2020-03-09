@@ -1,6 +1,8 @@
 package com.scut.indoorLocation.utility;
 
+import com.scut.indoorLocation.entity.UserInformation;
 import com.scut.indoorLocation.exception.FileUploadException;
+import com.scut.indoorLocation.mapper.UserInformationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -8,8 +10,11 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -25,8 +30,6 @@ public class ImageUtil {
     @Value("${image.dir.path}")
     private String imageFilesPath;
 
-    private static String URL_PATH = "http://39.99.131.85/images/";
-
     /**
      * 注意该方法为异步方法
      * 上传的照片  -->   文件url
@@ -41,7 +44,7 @@ public class ImageUtil {
             throw new FileUploadException("图片不能为空");
 
         // 使用UUID构造新的文件路径
-        String tag = image.getOriginalFilename().split("\\.")[1];
+        String tag = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
         String fileName = UUID.randomUUID().toString().replaceAll("-", "") + "." + tag;
         String destFileName = imageFilesPath + File.separator + fileName;
         File destFile = new File(destFileName);
@@ -53,7 +56,9 @@ public class ImageUtil {
             throw new FileUploadException("系统内部IO错误");
         }
 
+
         // 返回图片的URL
+        String URL_PATH = "http://39.99.131.85/images/";
         return new AsyncResult<>(URL_PATH + fileName);
     }
 

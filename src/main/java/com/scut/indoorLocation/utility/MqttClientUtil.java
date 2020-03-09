@@ -1,13 +1,14 @@
 package com.scut.indoorLocation.utility;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.fusesource.mqtt.client.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -24,18 +25,18 @@ public class MqttClientUtil {
     @Value("${mqtt.port}")
     private int MQTT_PORT;
 
-    private BlockingConnection connection;
+    private ThreadLocal<BlockingConnection> connectionThreadLocal = new ThreadLocal<>();
 
     /**
      * Bean 初始化触发函数
      * @throws Exception 连接异常
      */
-    @PostConstruct
-    public void initMqttClientUtil() throws Exception {
+    public void connect() throws Exception {
         MQTT mqtt = new MQTT();
         mqtt.setHost(MQTT_HOST, MQTT_PORT);
-        this.connection = mqtt.blockingConnection();
-        this.connection.connect();
+        BlockingConnection connection = mqtt.blockingConnection();
+        connection.connect();
+        connectionThreadLocal.set(connection);
     }
 
     /**
@@ -48,41 +49,49 @@ public class MqttClientUtil {
 
         Object json = JSON.toJSON(message);
 
-        this.connection.publish(topic, json.toString().getBytes(), qos, false);
+        connectionThreadLocal.get().publish(topic, json.toString().getBytes(), qos, false);
     }
 
     /**
      * 订阅topic
      * @param topic 主题
+     * @param qos 消息传播等级
+     */
+    public void subscribe(String topic,  QoS qos) throws Exception {
+        BlockingConnection connection = connectionThreadLocal.get();
+        byte[] subscribe = connection.subscribe(new Topic[]{new Topic(topic, qos)});
+
+        log.info(new String(subscribe, Charsets.UTF_8));
+
+    }
+
+    /**
      * @param clazz Class
      * @param <T> pojo类
-     * @param qos 消息传播等级
      * @return pojo
      */
-    public <T> T subscribe(String topic, Class<T> clazz, QoS qos) throws Exception {
+    public <T> T receive(Class<T> clazz, long amount, TimeUnit timeUnit) throws Exception {
+        BlockingConnection connection = connectionThreadLocal.get();
 
-        this.connection.subscribe(new Topic[]{new Topic(topic, qos)});
-
-        Message message = this.connection.receive();
+        Message message = connection.receive(amount, timeUnit);
 
         return JSON.parseObject(message.getPayload(), clazz);
     }
 
-    /**
-     * 取消订阅topic
-     * @param topic 主题
-     */
-    public void unsubscribe(String topic) throws Exception {
-        this.connection.unsubscribe(new String[]{topic});
-    }
+//    /**
+//     * 取消订阅topic
+//     * @param topic 主题
+//     */
+//    public void unsubscribe(String topic) throws Exception {
+//        this.connection.unsubscribe(new String[]{topic});
+//    }
 
     /**
      * Bean销毁触发函数
      */
-    @PreDestroy
     void disconnect(){
         try {
-            this.connection.disconnect();
+            connectionThreadLocal.get().disconnect();
         } catch (Exception e) {
             log.error(e.getMessage());
         }

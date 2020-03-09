@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Mingor on 2020/2/17 19:35
@@ -36,14 +37,21 @@ public class LocationAlgorithmUtil {
      */
     @Async
     public void calculatePosition2D(List<FingerPrint2D> fingerPrintsLibrary, String sendTopic, String receiveTopic) {
-        log.info("定位服务调用开始, sendTopic:{}  receiveTopic{}", sendTopic, receiveTopic);
+        log.info("定位服务调用开始, sendTopic:{}  receiveTopic: {}", sendTopic, receiveTopic);
+        try {
+            mqttClientUtil.connect();
+            mqttClientUtil.subscribe(sendTopic, QoS.AT_MOST_ONCE);
+        } catch (Exception e) {
+            log.error("mqtt订阅错误: {}", e.getMessage());
+            return;
+        }
 
         while (true) {
             try {
-                LocationRequest request = mqttClientUtil.subscribe(sendTopic, LocationRequest.class, QoS.AT_MOST_ONCE);
+                LocationRequest request = mqttClientUtil.receive(LocationRequest.class, 1, TimeUnit.MINUTES);
                 if (request.isFinish()){
                     log.info("定位服务调用结束, sendTopic: {}  receiveTopic: {}", sendTopic, receiveTopic);
-                    mqttClientUtil.unsubscribe(sendTopic);
+                    mqttClientUtil.disconnect();
                     return;
                 }
 
@@ -54,8 +62,9 @@ public class LocationAlgorithmUtil {
                 log.info("{}, 定位结果: {}", request.toString(), result.toString());
 
             } catch (Exception e) {
-                Thread.currentThread().interrupt();
-                log.error("mqtt订阅错误");
+                log.error("mqtt 接收错误: {}", e.getMessage());
+                mqttClientUtil.disconnect();
+
                 return;
             }
 
@@ -72,17 +81,27 @@ public class LocationAlgorithmUtil {
     @Async
     public void collectFingerPrint(String tmpTopic, String metadataId){
         log.info("指纹采集服务调用开始, tmpTopic: {}", tmpTopic);
+        try {
+            mqttClientUtil.connect();
+            mqttClientUtil.subscribe(tmpTopic, QoS.AT_MOST_ONCE);
+        } catch (Exception e) {
+            log.error("mqtt订阅错误");
+            return;
+        }
 
         FingerPrintMetadata2D fingerPrintMetadata2D = levelDBUtil.get(metadataId, FingerPrintMetadata2D.class);
         List<FingerPrint2D> list = fingerPrintMetadata2D.getFingerPrint2DList();
 
         while (true) {
             try {
-                FingerPrintCollectRequest request = mqttClientUtil.subscribe(tmpTopic, FingerPrintCollectRequest.class, QoS.AT_MOST_ONCE);
+                FingerPrintCollectRequest request = mqttClientUtil.receive(FingerPrintCollectRequest.class, 1, TimeUnit.MINUTES);
+
                 if (request.getFinish()){
                     fingerPrintMetadata2D.setFingerPrint2DList(list);
                     levelDBUtil.put(metadataId, fingerPrintMetadata2D);
-                    mqttClientUtil.unsubscribe(tmpTopic);
+
+                    mqttClientUtil.disconnect();
+
                     log.info("指纹采集服务调用结束, tmpTopic: {}", tmpTopic);
                     return;
                 }
@@ -102,8 +121,8 @@ public class LocationAlgorithmUtil {
             } catch (Exception e) {
                 fingerPrintMetadata2D.setFingerPrint2DList(list);
                 levelDBUtil.put(metadataId, fingerPrintMetadata2D);
-                log.error("mqtt订阅错误");
-
+                log.error("mqtt receive错误");
+                mqttClientUtil.disconnect();
                 return;
             }
 

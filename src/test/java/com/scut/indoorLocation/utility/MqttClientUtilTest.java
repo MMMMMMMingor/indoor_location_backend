@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -37,7 +38,8 @@ class MqttClientUtilTest {
             LocationRequest locationRequest = new LocationRequest();
             do {
                 try {
-                    locationRequest = mqttClientUtil.subscribe("/test1", LocationRequest.class, QoS.AT_MOST_ONCE);
+                    mqttClientUtil.subscribe("/test1",  QoS.AT_MOST_ONCE);
+                    locationRequest = mqttClientUtil.receive( LocationRequest.class, 1, TimeUnit.MINUTES);
                     log.info(locationRequest.toString());
                 } catch (Exception e) {
                     log.error(e.toString());
@@ -45,17 +47,6 @@ class MqttClientUtilTest {
             } while (!locationRequest.isFinish());
         }).start();
 
-        new Thread(() -> {
-            LocationRequest locationRequest = new LocationRequest();
-            do {
-                try {
-                    locationRequest = mqttClientUtil.subscribe("/test2", LocationRequest.class, QoS.AT_MOST_ONCE);
-                    log.info(locationRequest.toString());
-                } catch (Exception e) {
-                    log.error(e.toString());
-                }
-            } while (!locationRequest.isFinish());
-        }).start();
 
         try {
             int read = System.in.read();
