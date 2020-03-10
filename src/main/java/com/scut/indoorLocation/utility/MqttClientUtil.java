@@ -1,13 +1,11 @@
 package com.scut.indoorLocation.utility;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.fusesource.mqtt.client.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 
@@ -59,10 +57,7 @@ public class MqttClientUtil {
      */
     public void subscribe(String topic,  QoS qos) throws Exception {
         BlockingConnection connection = connectionThreadLocal.get();
-        byte[] subscribe = connection.subscribe(new Topic[]{new Topic(topic, qos)});
-
-        log.info(new String(subscribe, Charsets.UTF_8));
-
+        connection.subscribe(new Topic[]{new Topic(topic, qos)});
     }
 
     /**
@@ -78,13 +73,6 @@ public class MqttClientUtil {
         return JSON.parseObject(message.getPayload(), clazz);
     }
 
-//    /**
-//     * 取消订阅topic
-//     * @param topic 主题
-//     */
-//    public void unsubscribe(String topic) throws Exception {
-//        this.connection.unsubscribe(new String[]{topic});
-//    }
 
     /**
      * Bean销毁触发函数

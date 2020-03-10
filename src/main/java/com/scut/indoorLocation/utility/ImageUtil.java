@@ -1,8 +1,6 @@
 package com.scut.indoorLocation.utility;
 
-import com.scut.indoorLocation.entity.UserInformation;
 import com.scut.indoorLocation.exception.FileUploadException;
-import com.scut.indoorLocation.mapper.UserInformationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -10,8 +8,6 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;

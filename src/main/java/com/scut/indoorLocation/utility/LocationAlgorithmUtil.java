@@ -43,12 +43,13 @@ public class LocationAlgorithmUtil {
             mqttClientUtil.subscribe(sendTopic, QoS.AT_MOST_ONCE);
         } catch (Exception e) {
             log.error("mqtt订阅错误: {}", e.getMessage());
+            mqttClientUtil.disconnect();
             return;
         }
 
         while (true) {
             try {
-                LocationRequest request = mqttClientUtil.receive(LocationRequest.class, 1, TimeUnit.MINUTES);
+                LocationRequest request = mqttClientUtil.receive(LocationRequest.class, 10, TimeUnit.MINUTES);
                 if (request.isFinish()){
                     log.info("定位服务调用结束, sendTopic: {}  receiveTopic: {}", sendTopic, receiveTopic);
                     mqttClientUtil.disconnect();
@@ -86,6 +87,7 @@ public class LocationAlgorithmUtil {
             mqttClientUtil.subscribe(tmpTopic, QoS.AT_MOST_ONCE);
         } catch (Exception e) {
             log.error("mqtt订阅错误");
+            mqttClientUtil.disconnect();
             return;
         }
 
@@ -94,7 +96,7 @@ public class LocationAlgorithmUtil {
 
         while (true) {
             try {
-                FingerPrintCollectRequest request = mqttClientUtil.receive(FingerPrintCollectRequest.class, 1, TimeUnit.MINUTES);
+                FingerPrintCollectRequest request = mqttClientUtil.receive(FingerPrintCollectRequest.class, 10, TimeUnit.MINUTES);
 
                 if (request.getFinish()){
                     fingerPrintMetadata2D.setFingerPrint2DList(list);
@@ -107,7 +109,6 @@ public class LocationAlgorithmUtil {
                 }
 
                 FingerPrint2D fingerPrint2D = FingerPrint2D.builder()
-                        .metadataId(metadataId)
                         .x(request.getX())
                         .y(request.getY())
                         .intensities(request.getIntensities())

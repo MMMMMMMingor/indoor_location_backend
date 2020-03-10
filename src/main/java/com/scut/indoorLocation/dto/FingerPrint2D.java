@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Created by Mingor on 2020/2/18 20:02
@@ -17,8 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FingerPrint2D implements IFingerPrint {
-
-    private String metadataId;
 
     private Double x;
 
