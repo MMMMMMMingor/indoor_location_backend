@@ -30,10 +30,10 @@ public class RequestLogAspect {
     private JwtUtil jwtUtil;
 
     @Pointcut("execution(public * com.scut.indoorLocation.controller..*(..))")
-    public void requestServer() {
+    public void controller() {
     }
 
-    @Before("requestServer()")
+    @Before("controller()")
     public void doBefore(JoinPoint joinPoint) {
         ServletRequestAttributes attributes = (ServletRequestAttributes)
                 RequestContextHolder.getRequestAttributes();
@@ -41,19 +41,26 @@ public class RequestLogAspect {
         if (attributes != null) {
             HttpServletRequest request = attributes.getRequest();
 
+            String uid;
+            try{
+                uid = jwtUtil.extractUidSubject(request);
+            }catch (IllegalArgumentException e){
+                uid = "";
+            }
+
             log.info("--------------------------------------------------------");
             log.info("IP                 : {}", request.getRemoteAddr());
             log.info("URL                : {}", request.getRequestURL().toString());
             log.info("HTTP Method        : {}", request.getMethod());
             log.info("Class Method       : {}.{}", joinPoint.getSignature().getDeclaringTypeName(),
                     joinPoint.getSignature().getName());
-            log.info("User Id            : {}", jwtUtil.extractUidSubject(request) == null ? "" : jwtUtil.extractUidSubject(request));
+            log.info("User Id            : {}", uid);
 
         }
 
     }
 
-    @Around("requestServer()")
+    @Around("controller()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         Object result = proceedingJoinPoint.proceed();
@@ -64,7 +71,7 @@ public class RequestLogAspect {
         return result;
     }
 
-    @After("requestServer()")
+    @After("controller()")
     void doAfter() {
         log.info("--------------------------------------------------------");
     }
