@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 使用AOP实现请求日志打印
  * Created by Mingor on 2020/3/13 15:15
  */
 @Component
@@ -46,12 +47,11 @@ public class RequestLogAspect {
             log.info("HTTP Method        : {}", request.getMethod());
             log.info("Class Method       : {}.{}", joinPoint.getSignature().getDeclaringTypeName(),
                     joinPoint.getSignature().getName());
-            log.info("User Id            : {}", jwtUtil.extractUidSubject(request));
+            log.info("User Id            : {}", jwtUtil.extractUidSubject(request) == null ? "" : jwtUtil.extractUidSubject(request));
 
         }
 
     }
-
 
     @Around("requestServer()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
