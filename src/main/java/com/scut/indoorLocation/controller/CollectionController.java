@@ -23,7 +23,6 @@ import javax.annotation.Resource;
  */
 @Api(value = "收藏接口", tags = "收藏接口")
 @RestController
-@Slf4j
 @RequestMapping("/api/collection")
 public class CollectionController {
 
@@ -40,7 +39,6 @@ public class CollectionController {
             collectionService.createCollection(storeId);
             return ResponseEntity.ok(new SuccessResponse(true, "添加成功"));
         } catch (CreateException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(true, "添加失败"));
         }
 
@@ -58,7 +56,7 @@ public class CollectionController {
     }
 
     @ApiOperation("删除收藏记录")
-    @RequestMapping(value = "/delete/{collectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{collectionId}", method = RequestMethod.DELETE)
     public ResponseEntity<SuccessResponse> deleteCollection(@ApiParam(value = "收藏ID") @PathVariable String collectionId) {
 
         //删除一个collection记录
@@ -66,7 +64,6 @@ public class CollectionController {
             collectionService.deleteCollection(collectionId);
             return ResponseEntity.ok(new SuccessResponse(true, "删除成功"));
         } catch (DeleteException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(true, "删除失败"));
         }
 

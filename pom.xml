@@ -108,6 +108,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!--spring AOP 框架-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- 华南理工大学-定位算法-->
         <dependency>
             <groupId>com.scut</groupId>
@@ -167,7 +173,6 @@
             </plugin>
         </plugins>
     </build>
-
 
 
 </project>

@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutionException;
  */
 @Api(value = "文件上传接口", tags = "文件上传接口")
 @RestController
-@Slf4j
 @RequestMapping("/api/upload")
 public class FileUploadController {
 
@@ -42,11 +41,9 @@ public class FileUploadController {
 
         try {
             String url = imageUtil.saveImage(image).get();
-            log.info("{}: 上传了一张照片", jwtUtil.extractUidSubject(request));
             return ResponseEntity.ok(new ImageUrlResponse(true, url, "上传成功"));
 
         } catch (FileUploadException | ExecutionException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.ok(new ImageUrlResponse(false, "", "图片不能为空"));
         }
 

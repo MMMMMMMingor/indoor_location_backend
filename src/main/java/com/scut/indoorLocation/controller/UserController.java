@@ -23,7 +23,6 @@ import javax.annotation.Resource;
  */
 @Api(value = "用户信息接口", tags = "用户信息接口")
 @RestController
-@Slf4j
 @RequestMapping("/api/user")
 public class UserController {
 
@@ -35,13 +34,10 @@ public class UserController {
     public ResponseEntity<SuccessResponse> register(@RequestBody RegisterRequest request) {
         try {
             userService.userRegister(request);
-            log.info("用户: {} 注册成功!",request.getUsername());
             return ResponseEntity.ok(new SuccessResponse(true, "注册成功"));
         } catch (UserNameExistException e) {
-            log.error("用户: {} 注册失败!, 用户名已存在", request.getUsername());
             return ResponseEntity.ok(new SuccessResponse(false,"用户名已存在"));
         } catch (VerifyCodeException e) {
-            log.error("用户: {} 注册失败!, 验证码错误", request.getUsername());
             return ResponseEntity.ok(new SuccessResponse(false,"验证码错误"));
         }
     }
@@ -53,7 +49,6 @@ public class UserController {
             userService.modifyUserInformation(request);
             return ResponseEntity.ok(new SuccessResponse(true, "修改成功"));
         } catch (UserInfoModifyException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false,"修改失败"));
         }
     }

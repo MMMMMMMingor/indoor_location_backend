@@ -22,7 +22,6 @@ import javax.annotation.Resource;
  */
 @Api(value = "店铺接口", tags = "店铺接口")
 @RestController
-@Slf4j
 @RequestMapping("/api/store")
 public class StoreController {
 
@@ -36,7 +35,6 @@ public class StoreController {
             storeService.createStore(request);
             return ResponseEntity.ok(new SuccessResponse(true, "创建成功"));
         } catch (CreateException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "创建失败"));
         }
     }
@@ -62,7 +60,6 @@ public class StoreController {
             storeService.modifyStoreInfo(param);
             return ResponseEntity.ok(new SuccessResponse(true, "店铺信息修改成功"));
         } catch (NotStoreOwnerException e) {
-            log.error("店铺信息修改异常 {}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "店铺信息修改失败"));
         }
     }

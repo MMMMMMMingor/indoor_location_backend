@@ -22,7 +22,6 @@ import javax.annotation.Resource;
  */
 @Api(value = "菜单项接口", tags = "菜单项接口")
 @RestController
-@Slf4j
 @RequestMapping("/api/menu")
 public class MenuItemController {
 
@@ -36,7 +35,6 @@ public class MenuItemController {
             menuService.createMenuItem(menuItemRequest);
             return ResponseEntity.ok(new SuccessResponse(true, "创建成功"));
         } catch (CreateException e) {
-            log.error("{}", e.getMessage() );
             return ResponseEntity.ok(new SuccessResponse(false, "创建失败"));
         }
     }
@@ -61,11 +59,9 @@ public class MenuItemController {
             menuService.modifyMenuInfo(param);
             return ResponseEntity.ok(new SuccessResponse(true, "菜单项信息修改成功"));
         } catch (NotStoreOwnerException e) {
-            log.error("菜单项信息修改异常 {}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "用户非店铺主人，修改失败"));
         }
         catch(NotExistException ex){
-            log.error("菜单项修改异常{}", ex.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "菜单项不存在，修改失败"));
         }
     }
@@ -75,16 +71,14 @@ public class MenuItemController {
      */
 
     @ApiOperation("删除菜单项")
-    @RequestMapping(value = "/delete/{menuId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{menuId}", method = RequestMethod.DELETE)
     public ResponseEntity<SuccessResponse> deleteMenuItem(@ApiParam (value="menuId")@PathVariable String menuId) {
         try {
             menuService.deleteMenuItem(menuId);
             return ResponseEntity.ok(new SuccessResponse(true, "菜单项删除成功"));
         } catch (NotStoreOwnerException e) {
-            log.error("菜单项删除异常{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "非店铺拥有者，删除失败"));
         } catch (NotExistException ex) {
-            log.error("菜单项删除异常{}", ex.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, "菜单项不存在，删除失败"));
         }
 

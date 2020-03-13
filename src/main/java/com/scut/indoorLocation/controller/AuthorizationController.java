@@ -20,7 +20,6 @@ import java.util.Map;
  */
 @Api(value = "认证接口", tags = "认证接口")
 @RestController
-@Slf4j
 public class AuthorizationController {
 
     @Resource
@@ -45,7 +44,6 @@ public class AuthorizationController {
 
         // 生成Token并返回
         String jwt = jwtUtil.generateToken(username, claims);
-        log.info("登录用户: {}, JWT: {}", username, jwt);
         return ResponseEntity.ok(new JWTResponse(jwt));
 
     }

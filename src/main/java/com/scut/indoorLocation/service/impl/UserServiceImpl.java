@@ -27,7 +27,6 @@ import java.time.LocalDateTime;
  * Created by Mingor on 2019/11/19 9:35
  */
 @Service
-@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Resource
@@ -110,7 +109,6 @@ public class UserServiceImpl implements UserService {
         if (count != 1)
             throw new UserInfoModifyException("用户信息修改失败");
 
-        log.info("{}: 修改用户信息", uid);
     }
 
     @Override

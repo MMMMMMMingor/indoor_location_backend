@@ -16,7 +16,6 @@ import javax.annotation.Resource;
  */
 @Api(value = "邮件接口", tags = "邮件接口")
 @RestController
-@Slf4j
 @RequestMapping("/api/email")
 public class EmailController {
 

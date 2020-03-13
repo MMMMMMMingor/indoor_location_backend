@@ -23,7 +23,6 @@ import java.util.Optional;
  */
 @Api(value = "定位服务接口", tags = "定位服务接口")
 @RestController
-@Slf4j
 @RequestMapping("/api/location")
 public class LocationController {
 
@@ -39,7 +38,6 @@ public class LocationController {
             return ResponseEntity.ok(new SuccessResponse(true, "创建成功"));
 
         } catch (CreateException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, e.getMessage()));
         }
 
@@ -53,7 +51,6 @@ public class LocationController {
             FingerPrintMetaDetailResponse response = locationService.queryMetaById(metadataId);
             return ResponseEntity.ok(response);
         } catch (NotOwnerException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.of(Optional.empty());
         }
     }
@@ -68,7 +65,6 @@ public class LocationController {
             return ResponseEntity.ok(new SuccessResponse(true, "删除成功"));
 
         } catch (NotOwnerException e) {
-            log.error("{}", e.getMessage());
             return ResponseEntity.ok(new SuccessResponse(false, e.getMessage()));
         }
 
@@ -92,7 +88,6 @@ public class LocationController {
             LocationServiceTopicResponse response = locationService.getPosition2D(metadataId);
             return ResponseEntity.ok(response);
         } catch (FingerPrintEmptyException e) {
-            log.error(e.getMessage());
             return ResponseEntity.ok(new LocationServiceTopicResponse(false, null, null, e.getMessage()));
         }
     }
@@ -107,7 +102,6 @@ public class LocationController {
             return ResponseEntity.ok(new CollectTopicResponse(true, tmpCode, "请求成功"));
 
         } catch (FingerPrintAuthorizationException e) {
-            log.error(e.getMessage());
             return ResponseEntity.ok(new CollectTopicResponse(false, null, e.getMessage()));
         }
 
