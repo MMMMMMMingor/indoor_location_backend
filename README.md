@@ -7,12 +7,12 @@
  - 数据缓存层：levelDB（嵌入式数据库）
  
 ---
-### 一些重要的连接：
- - mqtt管理界面(账号密码：admin public) http://39.99.131.85:18083/
+### 使用用到的一些服务：
+ - mqtt （使用的是开源的EMQX）
 
- - jenkins http://39.99.131.85:8088/
+ - jenkins 
 
- - swagger 在线文档 http://39.99.131.85/swagger-ui.html#/
+ - swagger 在线文档 http://localhost/swagger-ui.html#/
 
 ---
 
