@@ -7,12 +7,10 @@
  - 数据缓存层：levelDB（嵌入式数据库）
  
 ---
-### 使用用到的一些服务：
- - mqtt （使用的是开源的EMQX）
+### 使用到的一些服务：
+ - EMQX MQTT服务
 
- - jenkins 
-
- - swagger 在线文档 http://localhost/swagger-ui.html#/
+ - gogs + jenkins  CI\CD平台
 
 ---
 
