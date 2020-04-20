@@ -21,22 +21,6 @@ public class ChannelUtil {
 
     private static final int COUNT = 50;
 
-    @Resource
-    private LocationAlgorithmUtil locationAlgorithmUtil;
-
-    /**
-     * 添加channel
-     *
-     * @param metadataId ID
-     */
-    private void createIfAbsent(String metadataId) {
-        if (!channels.containsKey(metadataId)) {
-            ArrayBlockingQueue<LocationRequest> channel = new ArrayBlockingQueue<>(COUNT);
-            channels.putIfAbsent(metadataId, channel);
-            locationAlgorithmUtil.calculatePosition2D(channel, metadataId);
-        }
-    }
-
     /**
      * dispatch 任务
      *
@@ -44,13 +28,42 @@ public class ChannelUtil {
      * @param data       数据
      */
     public void dispatcher(String metadataId, String data) {
-        createIfAbsent(metadataId);
         LocationRequest request = JSON.parseObject(data, LocationRequest.class);
         try {
             channels.get(metadataId).put(request);
         } catch (InterruptedException e) {
             log.error("分发错误 {}", e.getMessage());
         }
+    }
+
+    /**
+     * 获取channel
+     *
+     * @param metadataId ID
+     * @return channel
+     */
+    ArrayBlockingQueue<LocationRequest> getChannel(String metadataId) {
+        return channels.get(metadataId);
+    }
+
+    /**
+     * 判定是否包含channel
+     *
+     * @param metadataId ID
+     * @return 是否包含channel
+     */
+    public boolean containsChannel(String metadataId) {
+        return channels.containsKey(metadataId);
+    }
+
+    /**
+     * 创建 channel
+     *
+     * @param metadataId ID
+     */
+    public void createChannel(String metadataId) {
+        ArrayBlockingQueue<LocationRequest> channel = new ArrayBlockingQueue<>(COUNT);
+        channels.putIfAbsent(metadataId, channel);
     }
 
     /**

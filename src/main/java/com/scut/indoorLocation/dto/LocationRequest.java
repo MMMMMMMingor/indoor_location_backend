@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scut.point.IFingerPrint;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class LocationRequest implements IFingerPrint {
     @ApiModelProperty(value = "信号强度列表", name = "intensities", example = "[1,2,3,4,5]")
     private int[] intensities;
 
+    @JsonIgnore
     private boolean finished = false;
 
     @Override

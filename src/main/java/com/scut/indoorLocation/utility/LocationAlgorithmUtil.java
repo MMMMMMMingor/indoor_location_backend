@@ -35,20 +35,23 @@ public class LocationAlgorithmUtil {
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Resource
+    private ChannelUtil channelUtil;
 
     /**
      * 使用websocket获取定位请求并处理定位请求
      *
-     * @param channel    通道
      * @param metadataId ID
      */
     @Async("location-thread-pool")
-    public void calculatePosition2D(ArrayBlockingQueue<LocationRequest> channel, String metadataId) {
+    public void calculatePosition2D(String metadataId) {
         log.info("正在读取历史指纹~~~");
         FingerPrintMetadata2D fingerPrintMetadata2D = levelDBUtil.get(metadataId, FingerPrintMetadata2D.class);
         List<FingerPrint2D> fingerPrintsLibrary = fingerPrintMetadata2D.getFingerPrint2DList();
 
         log.info("定位服务调用开始");
+
+        ArrayBlockingQueue<LocationRequest> channel = channelUtil.getChannel(metadataId);
 
         while (true) {
             try {
@@ -68,6 +71,7 @@ public class LocationAlgorithmUtil {
 
             } catch (InterruptedException e) {
                 log.error("超时中断 : {}", e.getMessage());
+                channelUtil.removeChannel(metadataId);
                 return;
             }
         }
