@@ -3,11 +3,9 @@ package com.scut.indoorLocation.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scut.indoorLocation.dto.FingerPrintMetaDetailResponse;
 import com.scut.indoorLocation.dto.FingerPrintMetadataRequest;
-import com.scut.indoorLocation.dto.LocationServiceTopicResponse;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
-import com.scut.indoorLocation.exception.FingerPrintEmptyException;
 import com.scut.indoorLocation.exception.NotOwnerException;
 
 
@@ -48,14 +46,6 @@ public interface LocationService {
      * @return 分页后的元数据
      */
     IPage<FingerPrintMetadata2D> queryMetadataByPage(Long pageNo, Long pageSize);
-
-    /**
-     * 计算用户的2D坐标
-     *
-     * @param metadataId 当前指纹元数据
-     * @return mqtt topic
-     */
-    LocationServiceTopicResponse getPosition2D(String metadataId) throws FingerPrintEmptyException;
 
 
 }

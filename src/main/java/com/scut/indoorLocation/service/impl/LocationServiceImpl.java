@@ -5,13 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.scut.indoorLocation.dto.FingerPrintMetaDetailResponse;
 import com.scut.indoorLocation.dto.FingerPrintMetadataRequest;
-import com.scut.indoorLocation.dto.LocationServiceTopicResponse;
 import com.scut.indoorLocation.entity.AccessPoint;
-import com.scut.indoorLocation.dto.FingerPrint2D;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
-import com.scut.indoorLocation.exception.FingerPrintEmptyException;
 import com.scut.indoorLocation.exception.NotOwnerException;
 import com.scut.indoorLocation.mapper.AccessPointMapper;
 import com.scut.indoorLocation.mapper.FingerPrintMetadata2DMapper;
@@ -26,7 +23,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -177,22 +173,4 @@ public class LocationServiceImpl implements LocationService {
         return page;
     }
 
-
-    @Override
-    public LocationServiceTopicResponse getPosition2D(String metadataId) throws FingerPrintEmptyException {
-
-        FingerPrintMetadata2D fingerPrintMetadata2D = levelDBUtil.get(metadataId, FingerPrintMetadata2D.class);
-
-        List<FingerPrint2D> fingerPrint2DHistory = fingerPrintMetadata2D.getFingerPrint2DList();
-
-        if (fingerPrint2DHistory.size() == 0)
-            throw new FingerPrintEmptyException("没有指纹库信息");
-
-        String sendTopic = uuidUtil.get32LengthString();
-        String receiveTopic = uuidUtil.get32LengthString();
-
-        locationAlgorithmUtil.calculatePosition2D(fingerPrint2DHistory, sendTopic, receiveTopic);
-
-        return new LocationServiceTopicResponse(true, sendTopic, receiveTopic, "请求成功");
-    }
 }

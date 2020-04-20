@@ -19,8 +19,7 @@ public class LocationRequest implements IFingerPrint {
     @ApiModelProperty(value = "信号强度列表", name = "intensities", example = "[1,2,3,4,5]")
     private int[] intensities;
 
-    @ApiModelProperty(value = "是否结束", name = "finish", example = "false")
-    private boolean finish;
+    private boolean finished = false;
 
     @Override
     public int[] getAPS() {

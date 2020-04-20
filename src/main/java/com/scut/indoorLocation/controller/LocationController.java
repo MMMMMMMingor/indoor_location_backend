@@ -5,7 +5,6 @@ import com.scut.indoorLocation.dto.*;
 import com.scut.indoorLocation.entity.FingerPrintMetadata2D;
 import com.scut.indoorLocation.exception.CreateException;
 import com.scut.indoorLocation.exception.FingerPrintAuthorizationException;
-import com.scut.indoorLocation.exception.FingerPrintEmptyException;
 import com.scut.indoorLocation.exception.NotOwnerException;
 import com.scut.indoorLocation.service.LocationService;
 import io.swagger.annotations.Api;
@@ -24,6 +23,7 @@ import java.util.Optional;
 @Api(value = "定位服务接口", tags = "定位服务接口")
 @RestController
 @RequestMapping("/api/location")
+@Slf4j
 public class LocationController {
 
     @Resource
@@ -40,7 +40,6 @@ public class LocationController {
         } catch (CreateException e) {
             return ResponseEntity.ok(new SuccessResponse(false, e.getMessage()));
         }
-
     }
 
     @ApiOperation("查询指纹库详细信息")
@@ -80,18 +79,6 @@ public class LocationController {
         return ResponseEntity.ok(data);
     }
 
-    @ApiOperation("申请使用定位服务，申请成功后，通过mqtt服务器向服务器发送定位请求, mqtt topic: \n sendTopic（客户端 --> 服务端）\n receiveTopic 指纹库元数据（服务端 --> 客户端）")
-    @RequestMapping(value = "/service/{metadataId}", method = RequestMethod.POST)
-    public ResponseEntity<LocationServiceTopicResponse> queryCollection(@ApiParam(value = "指纹库元数据ID") @PathVariable String metadataId) {
-
-        try {
-            LocationServiceTopicResponse response = locationService.getPosition2D(metadataId);
-            return ResponseEntity.ok(response);
-        } catch (FingerPrintEmptyException e) {
-            return ResponseEntity.ok(new LocationServiceTopicResponse(false, null, null, e.getMessage()));
-        }
-    }
-
 
     @ApiOperation("申请采集指纹信息，申请成功后回返一个临时码，以该临时为topic，向mqtt服务器向服务器发送客户端采集到指纹")
     @RequestMapping(value = "/collect/{metadataId}", method = RequestMethod.POST)
@@ -104,8 +91,9 @@ public class LocationController {
         } catch (FingerPrintAuthorizationException e) {
             return ResponseEntity.ok(new CollectTopicResponse(false, null, e.getMessage()));
         }
-
     }
+
+
 
 
 }

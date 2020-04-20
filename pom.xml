@@ -27,6 +27,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- spring boot websocket-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
         <!-- spring boot security-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -118,7 +124,7 @@
         <dependency>
             <groupId>com.scut</groupId>
             <artifactId>knn_algorithm</artifactId>
-            <version>0.5</version>
+            <version>0.6</version>
         </dependency>
 
 

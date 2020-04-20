@@ -1,5 +1,6 @@
 package com.scut.indoorLocation.utility;
 
+import com.alibaba.fastjson.JSON;
 import com.scut.indoorLocation.dto.FingerPrintCollectRequest;
 import com.scut.indoorLocation.dto.LocationRequest;
 import com.scut.indoorLocation.dto.FingerPrint2D;
@@ -8,12 +9,14 @@ import com.scut.knn_algorithm.KnnAlgorithm;
 import com.scut.point.Vector2D;
 import lombok.extern.slf4j.Slf4j;
 import org.fusesource.mqtt.client.QoS;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,58 +32,55 @@ public class LocationAlgorithmUtil {
     @Resource
     private LevelDBUtil levelDBUtil;
 
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+
     /**
-     * 使用mqtt获取定位请求并处理定位请求
-     * @param fingerPrintsLibrary 指纹库
-     * @param sendTopic （客户端 --> 服务端）
-     * @param receiveTopic （服务端 --> 客户端）
+     * 使用websocket获取定位请求并处理定位请求
+     *
+     * @param channel    通道
+     * @param metadataId ID
      */
-    @Async
-    public void calculatePosition2D(List<FingerPrint2D> fingerPrintsLibrary, String sendTopic, String receiveTopic) {
-        log.info("定位服务调用开始, sendTopic:{}  receiveTopic: {}", sendTopic, receiveTopic);
-        try {
-            mqttClientUtil.connect();
-            mqttClientUtil.subscribe(sendTopic, QoS.AT_MOST_ONCE);
-        } catch (Exception e) {
-            log.error("mqtt订阅错误: {}", e.getMessage());
-            mqttClientUtil.disconnect();
-            return;
-        }
+    @Async("location-thread-pool")
+    public void calculatePosition2D(ArrayBlockingQueue<LocationRequest> channel, String metadataId) {
+        log.info("正在读取历史指纹~~~");
+        FingerPrintMetadata2D fingerPrintMetadata2D = levelDBUtil.get(metadataId, FingerPrintMetadata2D.class);
+        List<FingerPrint2D> fingerPrintsLibrary = fingerPrintMetadata2D.getFingerPrint2DList();
+
+        log.info("定位服务调用开始");
 
         while (true) {
             try {
-                LocationRequest request = mqttClientUtil.receive(LocationRequest.class, 10, TimeUnit.MINUTES);
-                if (request.isFinish()){
-                    log.info("定位服务调用结束, sendTopic: {}  receiveTopic: {}", sendTopic, receiveTopic);
-                    mqttClientUtil.disconnect();
+                LocationRequest request = channel.poll(3, TimeUnit.MINUTES);
+
+                if (request != null) {
+                    Vector2D result = KnnAlgorithm.knnAlgorithm(fingerPrintsLibrary, request, 5); // knn算法
+
+                    String message = JSON.toJSON(result).toString();
+                    simpMessagingTemplate.convertAndSend("/service/result/" + metadataId, message);
+
+                    log.info("{}, 定位结果: {}", request.toString(), result.toString());
+                } else {
+                    log.info("定位服务调用结束");
                     return;
                 }
 
-                Vector2D result = KnnAlgorithm.knnAlgorithm(fingerPrintsLibrary, request, 7);
-
-                mqttClientUtil.publish(receiveTopic, result, QoS.AT_MOST_ONCE);
-
-                log.info("{}, 定位结果: {}", request.toString(), result.toString());
-
-            } catch (Exception e) {
-                log.error("mqtt 接收错误: {}", e.getMessage());
-                mqttClientUtil.disconnect();
-
+            } catch (InterruptedException e) {
+                log.error("超时中断 : {}", e.getMessage());
                 return;
             }
-
         }
-
     }
-
 
     /**
      * 采集指纹信息
-     * @param tmpTopic topic （客户端 --> 服务端）
+     *
+     * @param tmpTopic   topic （客户端 --> 服务端）
      * @param metadataId 元数据ID
      */
     @Async
-    public void collectFingerPrint(String tmpTopic, String metadataId){
+    public void collectFingerPrint(String tmpTopic, String metadataId) {
         log.info("指纹采集服务调用开始, tmpTopic: {}", tmpTopic);
         try {
             mqttClientUtil.connect();
@@ -98,7 +98,7 @@ public class LocationAlgorithmUtil {
             try {
                 FingerPrintCollectRequest request = mqttClientUtil.receive(FingerPrintCollectRequest.class, 10, TimeUnit.MINUTES);
 
-                if (request.getFinish()){
+                if (request.getFinish()) {
                     fingerPrintMetadata2D.setFingerPrint2DList(list);
                     levelDBUtil.put(metadataId, fingerPrintMetadata2D);
 

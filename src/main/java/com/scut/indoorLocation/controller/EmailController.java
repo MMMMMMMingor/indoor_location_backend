@@ -4,7 +4,6 @@ import com.scut.indoorLocation.dto.SuccessResponse;
 import com.scut.indoorLocation.service.MailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
