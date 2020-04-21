@@ -22,6 +22,6 @@ public class FingerPrintMetaDetailResponse {
     private List<AccessPoint> accessPoints;
 
     @ApiModelProperty(value = "指纹数", name = "count", example = "10")
-    private List<FingerPrint2D> fingerPrintS;
+    private List<FingerPrint2D> fingerPrints;
 
 }
